@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mach-T — Material académico, tienda estudiantil y comunidad real para estudiantes de la Universidad del Magdalena">
+    <meta property="og:title" content="Mach-T — La app de Unimag">
+    <meta property="og:description" content="Parciales, apuntes, tienda entre compañeros y más. Ya disponible en Play Store.">
+    <meta property="og:type" content="website">
+    <title>Mach-T — La app de los estudiantes de Unimag</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #7C3AED;
+            --purple-light: #9F67FF;
+            --purple-dark: #5B21B6;
+            --cyan: #06B6D4;
+            --green: #10B981;
+            --red: #EF4444;
+            --amber: #F59E0B;
+            --pink: #EC4899;
+            --blue: #3B82F6;
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --bg3: #1a1a26;
+            --border: rgba(255,255,255,0.08);
+            --text: #F9FAFB;
+            --subtext: #9CA3AF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50%     { transform: translateY(-14px); }
+        }
+        @keyframes floatSlow {
+            0%,100% { transform: translateY(0) rotate(-1deg); }
+            50%     { transform: translateY(-8px) rotate(1deg); }
+        }
+        @keyframes pulseGlow {
+            0%,100% { box-shadow: 0 0 18px rgba(124,58,237,.5); }
+            50%     { box-shadow: 0 0 48px rgba(124,58,237,.9), 0 0 90px rgba(124,58,237,.25); }
+        }
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+        @keyframes orb {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33%     { transform: translate(30px,-20px) scale(1.1); }
+            66%     { transform: translate(-20px,15px) scale(.9); }
+        }
+        @keyframes blink {
+            0%,100% { opacity:1; }
+            50%     { opacity:.3; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .65s ease, transform .65s ease;
+        }
+        .reveal.show { opacity: 1; transform: translateY(0); }
+
+        /* ── HERO ── */
+        #hero {
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 72px 24px 96px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-orbs {
+            position: absolute; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .35;
+        }
+        .orb1 {
+            width: 500px; height: 500px;
+            background: var(--purple);
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            animation: orb 12s ease-in-out infinite;
+        }
+        .orb2 {
+            width: 300px; height: 300px;
+            background: var(--cyan);
+            bottom: 0; right: -100px;
+            animation: orb 15s ease-in-out 2s infinite;
+            opacity: .2;
+        }
+        .orb3 {
+            width: 250px; height: 250px;
+            background: var(--pink);
+            bottom: 100px; left: -80px;
+            animation: orb 18s ease-in-out 5s infinite;
+            opacity: .15;
+        }
+        /* Floating particles */
+        .particles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .pt {
+            position: absolute;
+            border-radius: 50%;
+            opacity: .5;
+        }
+
+        .hero-content { position: relative; z-index: 1; max-width: 560px; }
+
+        /* Penguin logo SVG */
+        .logo-wrap {
+            margin-bottom: 24px;
+            animation: floatSlow 5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(124,58,237,.18);
+            border: 1px solid rgba(124,58,237,.4);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--purple-light);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .hero-chip::before { content: '✦'; }
+
+        h1 {
+            font-size: clamp(56px, 16vw, 96px);
+            font-weight: 900;
+            line-height: .95;
+            letter-spacing: -.03em;
+            margin-bottom: 14px;
+            background: linear-gradient(150deg, #fff 0%, #c4b5fd 45%, #7C3AED 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 5s linear infinite;
+        }
+
+        .hero-quote {
+            font-size: clamp(15px, 4vw, 19px);
+            font-style: italic;
+            color: rgba(255,255,255,.75);
+            margin-bottom: 12px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .hero-sub {
+            font-size: clamp(13px, 3.2vw, 16px);
+            color: var(--subtext);
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-play {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--purple);
+            color: #fff;
+            text-decoration: none;
+            padding: 17px 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 285px;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            animation: pulseGlow 3s ease-in-out infinite;
+            transition: transform .2s, background .2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-play:hover { transform: scale(1.04); background: var(--purple-light); }
+        .btn-soon {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.1);
+            color: var(--subtext);
+            padding: 15px 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 285px;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .soon-pill {
+            background: rgba(245,158,11,.18);
+            border: 1px solid rgba(245,158,11,.4);
+            color: var(--amber);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+        .store-text { display: flex; flex-direction: column; align-items: flex-start; }
+        .store-sub  { font-size: 10px; opacity: .65; font-weight: 400; }
+        .store-name { font-size: 17px; font-weight: 700; line-height: 1; }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 28px; left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--subtext);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            opacity: .45;
+            z-index: 1;
+        }
+        .chevron {
+            width: 16px; height: 16px;
+            border-right: 2px solid var(--subtext);
+            border-bottom: 2px solid var(--subtext);
+            transform: rotate(45deg);
+            animation: float 1.8s ease-in-out infinite;
+        }
+
+        /* ── PITCH ── */
+        #pitch {
+            padding: 70px 24px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        }
+        .pitch-big {
+            font-size: clamp(24px, 6.5vw, 42px);
+            font-weight: 900;
+            line-height: 1.25;
+            max-width: 560px;
+            margin: 0 auto 18px;
+        }
+        .pitch-big .hi { color: var(--cyan); }
+        .pitch-body {
+            font-size: clamp(14px, 3.5vw, 17px);
+            color: var(--subtext);
+            max-width: 460px;
+            margin: 0 auto;
+            line-height: 1.75;
+        }
+
+        /* ── FEATURES ── */
+        #features {
+            padding: 70px 24px;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+        .section-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--purple-light);
+            margin-bottom: 10px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: clamp(26px, 7vw, 40px);
+            font-weight: 900;
+            margin-bottom: 48px;
+            line-height: 1.2;
+        }
+        .feat-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        @media(min-width:500px){
+            .feat-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .feat-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 26px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: transform .3s, border-color .3s, box-shadow .3s;
+            cursor: default;
+        }
+        .feat-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, var(--cc, var(--purple)), transparent 60%);
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        .feat-card:hover { transform: translateY(-6px); border-color: var(--cc); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+        .feat-card:hover::after { opacity: .07; }
+        .feat-top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--cc);
+            border-radius: 22px 22px 0 0;
+        }
+        .feat-num {
+            width: 38px; height: 38px;
+            border-radius: 11px;
+            background: var(--cc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .feat-icon { font-size: 30px; margin-bottom: 10px; display: block; }
+        .feat-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+        .feat-desc { font-size: 13px; color: var(--subtext); line-height: 1.65; }
+
+        /* ── SCREENSHOTS ── */
+        #screenshots {
+            padding: 70px 0 50px;
+            background: var(--bg2);
+            overflow: hidden;
+        }
+        .screenshots-head { padding: 0 24px; max-width: 820px; margin: 0 auto 8px; }
+
+        .phones-scroll {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding: 20px 24px 30px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .phones-scroll::-webkit-scrollbar { display: none; }
+
+        .phone {
+            flex-shrink: 0;
+            width: 210px;
+            background: #0d0d16;
+            border-radius: 34px;
+            border: 2px solid rgba(255,255,255,.13);
+            overflow: hidden;
+            scroll-snap-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+            animation: floatSlow 5s ease-in-out infinite;
+        }
+        .phone:nth-child(2){ animation-delay: .8s; }
+        .phone:nth-child(3){ animation-delay: 1.6s; }
+        .phone:nth-child(4){ animation-delay: 2.4s; }
+
+        .notch {
+            height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            background: #0d0d16;
+        }
+        .notch-pill {
+            width: 56px; height: 9px;
+            background: rgba(255,255,255,.1);
+            border-radius: 999px;
+        }
+        .screen { height: 400px; overflow: hidden; padding: 10px; position: relative; }
+
+        /* Shared mini‑UI components */
+        .s-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .s-name   { font-size: 15px; font-weight: 800; color: #fff; }
+        .s-sub    { font-size: 8px;  color: #9CA3AF; }
+        .s-btn    { background: var(--purple); color: #fff; font-size: 7.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; }
+        .card {
+            background: #1a1a26;
+            border-radius: 12px;
+            padding: 9px 9px 8px;
+            margin-bottom: 7px;
+            border: 1px solid rgba(255,255,255,.06);
+            position: relative;
+        }
+        .card-bar {
+            position: absolute; top: 0; left: 0; bottom: 0;
+            width: 3px; border-radius: 12px 0 0 12px;
+        }
+        .badge {
+            font-size: 6.5px; font-weight: 700;
+            padding: 2px 7px; border-radius: 999px;
+            display: inline-block;
+        }
+        .tag {
+            font-size: 6px; padding: 1.5px 5px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.15);
+            color: #9CA3AF; display: inline-block;
+        }
+        .act { font-size: 7px; color: #9CA3AF; display: inline-flex; align-items: center; gap: 2px; }
+        .act.pos { background: rgba(16,185,129,.15); color: #10B981; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+
+        /* Tab bar */
+        .tabbar {
+            height: 52px;
+            background: rgba(10,10,20,.97);
+            border-top: 1px solid rgba(255,255,255,.07);
+            display: flex; align-items: center;
+        }
+        .tab {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 2px;
+        }
+        .t-ic  { font-size: 14px; opacity: .45; }
+        .t-lb  { font-size: 5.5px; color: #6B7280; font-weight: 600; }
+        .tab.on .t-ic { opacity: 1; }
+        .tab.on .t-lb { color: var(--purple-light); }
+
+        /* ── Scroll dots ── */
+        .dots {
+            display: flex; justify-content: center;
+            gap: 6px; padding: 6px 0 6px;
+        }
+        .dot {
+            height: 4px; border-radius: 2px;
+            background: rgba(255,255,255,.2);
+            transition: width .3s, background .3s;
+        }
+        .dot.on { background: var(--purple); }
+
+        /* ── MANIFESTO ── */
+        #manifesto {
+            padding: 80px 24px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .mani-quote {
+            font-size: clamp(18px, 5.2vw, 28px);
+            font-weight: 800;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .mani-quote em { color: var(--cyan); font-style: normal; }
+        .mani-attr {
+            font-size: 13px; color: var(--subtext);
+            margin-bottom: 56px;
+        }
+        .mani-list { text-align: left; display: flex; flex-direction: column; gap: 22px; }
+        .mani-item { display: flex; gap: 16px; align-items: flex-start; }
+        .mani-ic {
+            width: 44px; height: 44px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .mani-item h3 { font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+        .mani-item p  { font-size: 13px; color: var(--subtext); line-height: 1.65; }
+
+        /* ── DOWNLOAD ── */
+        #download {
+            padding: 90px 24px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        #download::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(124,58,237,.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .dl-title {
+            font-size: clamp(30px, 8.5vw, 52px);
+            font-weight: 900; line-height: 1.1;
+            margin-bottom: 14px;
+            position: relative; z-index: 1;
+        }
+        .dl-grad {
+            background: linear-gradient(135deg, #7C3AED, #06B6D4);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dl-sub {
+            color: var(--subtext);
+            font-size: clamp(14px, 3.5vw, 17px);
+            margin-bottom: 42px;
+            line-height: 1.7;
+            position: relative; z-index: 1;
+        }
+        .dl-btns {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 14px;
+            position: relative; z-index: 1;
+        }
+        .btn-dl-play {
+            display: inline-flex; align-items: center; gap: 14px;
+            background: var(--purple); color: #fff;
+            text-decoration: none;
+            padding: 20px 36px;
+            border-radius: 18px;
+            font-size: 17px; font-weight: 700;
+            width: 100%; max-width: 310px;
+            justify-content: center;
+            animation: pulseGlow 3s ease-in-out infinite;
+            transition: transform .2s, background .2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-dl-play:hover { transform: scale(1.04); }
+        .btn-dl-soon {
+            display: inline-flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.1);
+            color: var(--subtext);
+            padding: 18px 36px;
+            border-radius: 18px;
+            font-size: 16px; font-weight: 600;
+            width: 100%; max-width: 310px;
+            justify-content: center;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 28px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--subtext);
+        }
+        footer span { color: var(--purple-light); }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 0 24px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section id="hero">
+    <div class="hero-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+
+    <div class="hero-content">
+        <!-- Pixel-art penguin SVG -->
+        <div class="logo-wrap">
+            <svg width="90" height="100" viewBox="0 0 90 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Graduation cap -->
+                <rect x="20" y="8" width="50" height="6" rx="2" fill="#7C3AED"/>
+                <rect x="40" y="2" width="10" height="8" rx="1" fill="#5B21B6"/>
+                <rect x="62" y="12" width="3" height="10" fill="#9F67FF"/>
+                <rect x="62" y="22" width="6" height="4" rx="1" fill="#F59E0B"/>
+                <!-- Body -->
+                <ellipse cx="45" cy="62" rx="26" ry="32" fill="#1e1e3a"/>
+                <!-- White belly -->
+                <ellipse cx="45" cy="66" rx="16" ry="22" fill="#e8e8f0"/>
+                <!-- Wings -->
+                <ellipse cx="17" cy="65" rx="8" ry="18" fill="#1e1e3a" transform="rotate(-10 17 65)"/>
+                <ellipse cx="73" cy="65" rx="8" ry="18" fill="#1e1e3a" transform="rotate(10 73 65)"/>
+                <!-- Eyes -->
+                <circle cx="37" cy="52" r="5" fill="white"/>
+                <circle cx="53" cy="52" r="5" fill="white"/>
+                <circle cx="38" cy="53" r="2.5" fill="#111"/>
+                <circle cx="54" cy="53" r="2.5" fill="#111"/>
+                <circle cx="38.8" cy="52.2" r=".9" fill="white"/>
+                <circle cx="54.8" cy="52.2" r=".9" fill="white"/>
+                <!-- Beak -->
+                <path d="M40 60 L45 66 L50 60 Z" fill="#F59E0B"/>
+                <!-- Feet -->
+                <ellipse cx="36" cy="94" rx="8" ry="4" fill="#F59E0B"/>
+                <ellipse cx="54" cy="94" rx="8" ry="4" fill="#F59E0B"/>
+                <!-- Purple sheen on head -->
+                <ellipse cx="45" cy="38" rx="18" ry="10" fill="#7C3AED" opacity=".45"/>
+            </svg>
+        </div>
+
+        <div class="hero-chip">Universidad del Magdalena</div>
+
+        <h1>MACH-T</h1>
+
+        <p class="hero-quote">"¿Y si tu paso por la U importara<br>más allá de tu graduación?"</p>
+
+        <p class="hero-sub">
+            Material académico, tienda estudiantil y comunidad real.<br>
+            Construida por estudiantes de Unimag, para estudiantes de Unimag.
+        </p>
+
+        <div class="btn-group">
+            <a href="https://play.google.com/store/apps/details?id=com.eseate.macht"
+               target="_blank" rel="noopener" class="btn-play">
+                <svg width="22" height="24" viewBox="0 0 22 24" fill="none"><path d="M1 1.5L20 12L1 22.5V1.5Z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                <div class="store-text">
+                    <span class="store-sub">Disponible en</span>
+                    <span class="store-name">Google Play</span>
+                </div>
+            </a>
+
+            <div class="btn-soon">
+                <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
+                <div class="store-text">
+                    <span style="font-size:10px;opacity:.6">Próximamente en</span>
+                    <div style="display:flex;align-items:center;gap:7px">
+                        <span style="font-size:16px;font-weight:700;color:#9CA3AF">App Store</span>
+                        <span class="soon-pill">Pronto</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-cue">
+        <span>DESLIZA</span>
+        <div class="chevron"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     PITCH
+════════════════════════════════════════════ -->
+<section id="pitch">
+    <div class="pitch-big reveal">
+        El conocimiento estudiantil<br>
+        <span class="hi">no puede seguir evaporándose</span><br>
+        con cada graduación.
+    </div>
+    <p class="pitch-body reveal" style="transition-delay:.15s">
+        Parciales resueltos a las 3am, resúmenes que salvaron semestres,
+        talleres que costaron un fin de semana. Todo eso tiene valor real.
+        Mach-T lo captura, lo organiza y lo hace accesible para siempre.
+    </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════ -->
+<section id="features">
+    <p class="section-label reveal">Todo en una app</p>
+    <h2 class="section-title reveal" style="transition-delay:.1s">
+        Cuatro razones para<br>descargarla ahora
+    </h2>
+
+    <div class="feat-grid">
+        <div class="feat-card reveal" style="--cc:#06B6D4;transition-delay:.05s">
+            <div class="feat-top-bar"></div>
+            <span class="feat-icon">📚</span>
+            <div class="feat-num" style="background:#06B6D4">1</div>
+            <h3 class="feat-title">Material Académico</h3>
+            <p class="feat-desc">Parciales, apuntes, talleres y resúmenes organizados por materia, programa y profe. Súbelo anónimo, vótalo, coméntalo. Lo más útil al tope.</p>
+        </div>
+
+        <div class="feat-card reveal" style="--cc:#F59E0B;transition-delay:.12s">
+            <div class="feat-top-bar"></div>
+            <span class="feat-icon">⭐</span>
+            <div class="feat-num" style="background:#F59E0B">2</div>
+            <h3 class="feat-title">Calificaciones de Profesores</h3>
+            <p class="feat-desc">Lo que siempre se susurró, ahora se escribe. Califica tu profe con estrellas directamente en el material. El contexto importa.</p>
+        </div>
+
+        <div class="feat-card reveal" style="--cc:#EF4444;transition-delay:.19s">
+            <div class="feat-top-bar"></div>
+            <span class="feat-icon">🛍️</span>
+            <div class="feat-num" style="background:#EF4444">3</div>
+            <h3 class="feat-title">Tienda entre Compañeros</h3>
+            <p class="feat-desc">Libros, calculadoras, materiales. Sin intermediarios, sin spam. Solo estudiantes de la U negociando entre sí.</p>
+        </div>
+
+        <div class="feat-card reveal" style="--cc:#10B981;transition-delay:.26s">
+            <div class="feat-top-bar"></div>
+            <span class="feat-icon">📢</span>
+            <div class="feat-num" style="background:#10B981">4</div>
+            <h3 class="feat-title">Voz Estudiantil</h3>
+            <p class="feat-desc">Debates, preguntas, convocatorias. Sin el ruido de 200 personas con stickers. Los anuncios quedan, se comentan y los importantes no se pierden.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SCREENSHOTS (phone mockups CSS)
+════════════════════════════════════════════ -->
+<section id="screenshots">
+    <div class="screenshots-head">
+        <p class="section-label reveal">Así se ve por dentro</p>
+        <h2 class="section-title reveal" style="transition-delay:.1s">La app, en acción</h2>
+    </div>
+
+    <div class="phones-scroll" id="phonesScroll">
+
+        <!-- ── Phone 1: Inicio ── -->
+        <div class="phone">
+            <div class="notch"><div class="notch-pill"></div></div>
+            <div class="screen" style="background:#0a0a0f">
+                <div class="s-header">
+                    <div>
+                        <div class="s-sub">Bienvenido</div>
+                        <div class="s-name">Ivan ⚙️</div>
+                    </div>
+                    <div class="s-btn">+ Subir</div>
+                </div>
+
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-bar" style="background:#06B6D4"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;padding-left:6px">
+                        <span class="badge" style="background:rgba(6,182,212,.15);color:#06B6D4">Taller</span>
+                        <span style="font-size:7px;color:#9CA3AF">S Sebastian</span>
+                    </div>
+                    <div style="margin-left:6px">
+                        <div style="background:#1a1a2e;border-radius:6px;height:46px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;overflow:hidden">
+                            <svg width="100%" height="40" viewBox="0 0 180 40">
+                                <text x="6" y="13" font-size="8" fill="#888" font-family="monospace">T(t)/T(t) = t·X''(x)/X(x) = -λ²</text>
+                                <text x="6" y="25" font-size="8" fill="#888" font-family="monospace">T'(t) + λ²T(t) = 0</text>
+                                <text x="6" y="37" font-size="7" fill="#555" font-family="monospace">m² + λ² = 0  →  m = ±iλ</text>
+                            </svg>
+                        </div>
+                        <div style="font-size:8.5px;font-weight:700;color:#fff;margin-bottom:4px">Un taller de edp</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">
+                            <span class="tag">2026-1</span>
+                            <span class="tag" style="border-color:#EC4899;color:#EC4899">Ing. Electrónica</span>
+                            <span class="tag">Mat. Especiales I</span>
+                        </div>
+                        <div style="font-size:7px;color:#6B7280;margin-bottom:5px">27 de mar</div>
+                        <div style="display:flex;gap:5px;align-items:center">
+                            <span class="act pos">👍 6</span>
+                            <span class="act">👎 1</span>
+                            <span class="act">💬 2</span>
+                            <span class="act" style="margin-left:auto;background:rgba(6,182,212,.12);color:#06B6D4;padding:2px 5px;border-radius:999px;font-size:6px;font-weight:700">✓ Confiable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-bar" style="background:#EF4444"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px;padding-left:6px">
+                        <span class="badge" style="background:rgba(239,68,68,.15);color:#EF4444">Parcial</span>
+                        <span style="font-size:7px;color:#9CA3AF">P Peter</span>
+                    </div>
+                    <div style="margin-left:6px">
+                        <div style="font-size:8.5px;font-weight:700;color:#fff;margin-bottom:4px">Parcial de programación 1</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px">
+                            <span class="tag" style="border-color:#3B82F6;color:#3B82F6">Ing. Civil</span>
+                            <span class="tag" style="border-color:#10B981;color:#10B981">Ing. Sistemas</span>
+                        </div>
+                        <div style="display:flex;gap:5px">
+                            <span class="act pos">👍 1</span>
+                            <span class="act">👎 0</span>
+                            <span class="act">💬 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabbar">
+                <div class="tab on"><span class="t-ic">🏠</span><span class="t-lb" style="color:#9F67FF">Inicio</span></div>
+                <div class="tab"><span class="t-ic">🔍</span><span class="t-lb">Buscar</span></div>
+                <div class="tab"><span class="t-ic">🎓</span><span class="t-lb">Operati.</span></div>
+                <div class="tab"><span class="t-ic">💬</span><span class="t-lb">Chat</span></div>
+                <div class="tab"><span class="t-ic">🏪</span><span class="t-lb">Tienda</span></div>
+                <div class="tab"><span class="t-ic">🔔</span><span class="t-lb">Notif.</span></div>
+            </div>
+        </div>
+
+        <!-- ── Phone 2: Tienda ── -->
+        <div class="phone">
+            <div class="notch"><div class="notch-pill"></div></div>
+            <div class="screen" style="background:#0a0a0f">
+                <div class="s-header">
+                    <div class="s-name" style="font-size:18px">Tienda</div>
+                    <div class="s-btn">+ Publicar</div>
+                </div>
+                <div style="display:flex;gap:4px;margin-bottom:10px;overflow:hidden">
+                    <span class="badge" style="background:rgba(124,58,237,.3);color:#9F67FF;border-radius:999px;padding:3px 9px">Todos</span>
+                    <span class="badge" style="border:1px solid rgba(245,158,11,.25);color:#F59E0B;border-radius:999px;padding:3px 9px">🍔 Comida</span>
+                    <span class="badge" style="border:1px solid rgba(59,130,246,.25);color:#60A5FA;border-radius:999px;padding:3px 9px">📖 Material</span>
+                </div>
+
+                <!-- Product 1 -->
+                <div class="card" style="display:flex;gap:8px;align-items:flex-start">
+                    <div class="card-bar" style="background:#EC4899"></div>
+                    <div style="width:60px;height:60px;background:rgba(236,72,153,.1);border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px">📚</div>
+                    <div style="flex:1;min-width:0;padding-left:4px">
+                        <div style="display:flex;gap:3px;margin-bottom:3px">
+                            <span class="badge" style="background:rgba(124,58,237,.2);color:#9F67FF;font-size:6px;border-radius:4px">Mat. académico</span>
+                            <span class="badge" style="background:rgba(16,185,129,.2);color:#10B981;font-size:6px;border-radius:4px">Disponible</span>
+                        </div>
+                        <div style="font-size:8.5px;font-weight:700;color:#fff;margin-bottom:2px">Patrón 2do corte anatomía</div>
+                        <div style="font-size:7px;color:#9CA3AF;margin-bottom:4px">Banco preguntas anatomía II</div>
+                        <div style="font-size:10.5px;font-weight:800;color:#9F67FF;margin-bottom:4px">$50.000</div>
+                        <div style="display:flex;gap:4px;align-items:center">
+                            <span class="act pos" style="font-size:6.5px">👍 2</span>
+                            <span class="act" style="font-size:6.5px">👎 1</span>
+                            <span class="act" style="font-size:6.5px">💬 2</span>
+                            <span class="act" style="margin-left:auto;background:rgba(6,182,212,.12);color:#06B6D4;padding:1px 5px;border-radius:999px;font-size:6px;font-weight:700">Recomendado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="card" style="display:flex;gap:8px;align-items:flex-start">
+                    <div class="card-bar" style="background:#10B981"></div>
+                    <div style="width:60px;height:60px;background:#1DB954;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px">🎵</div>
+                    <div style="flex:1;min-width:0;padding-left:4px">
+                        <div style="display:flex;gap:3px;margin-bottom:3px">
+                            <span class="badge" style="background:rgba(16,185,129,.2);color:#10B981;font-size:6px;border-radius:4px">Servicios</span>
+                            <span class="badge" style="background:rgba(16,185,129,.2);color:#10B981;font-size:6px;border-radius:4px">Disponible</span>
+                        </div>
+                        <div style="font-size:8.5px;font-weight:700;color:#fff;margin-bottom:2px">Spotify Premium</div>
+                        <div style="font-size:10.5px;font-weight:800;color:#9F67FF;margin-bottom:4px">$7.000</div>
+                        <div style="display:flex;gap:4px;align-items:center">
+                            <span class="act pos" style="font-size:6.5px">👍 4</span>
+                            <span class="act" style="font-size:6.5px">💬 2</span>
+                            <span class="act" style="margin-left:auto;background:rgba(6,182,212,.12);color:#06B6D4;padding:1px 5px;border-radius:999px;font-size:6px;font-weight:700">Recomendado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="card" style="display:flex;gap:8px;align-items:flex-start">
+                    <div class="card-bar" style="background:#7C3AED"></div>
+                    <div style="width:60px;height:60px;background:rgba(124,58,237,.1);border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px">👗</div>
+                    <div style="flex:1;min-width:0;padding-left:4px">
+                        <div style="display:flex;gap:3px;margin-bottom:3px">
+                            <span class="badge" style="border:1px solid rgba(255,255,255,.1);color:#9CA3AF;font-size:6px;border-radius:4px">Ropa y acces.</span>
+                        </div>
+                        <div style="font-size:8.5px;font-weight:700;color:#fff;margin-bottom:2px">prueba</div>
+                        <div style="font-size:10.5px;font-weight:800;color:#9F67FF">$1.212</div>
+                        <div style="font-size:7px;color:#9CA3AF;margin-top:2px">@ Raul</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabbar">
+                <div class="tab"><span class="t-ic">🏠</span><span class="t-lb">Inicio</span></div>
+                <div class="tab"><span class="t-ic">🔍</span><span class="t-lb">Buscar</span></div>
+                <div class="tab"><span class="t-ic">🎓</span><span class="t-lb">Operati.</span></div>
+                <div class="tab"><span class="t-ic">💬</span><span class="t-lb">Chat</span></div>
+                <div class="tab on"><span class="t-ic">🏪</span><span class="t-lb" style="color:#9F67FF">Tienda</span></div>
+                <div class="tab"><span class="t-ic">🔔</span><span class="t-lb">Notif.</span></div>
+            </div>
+        </div>
+
+        <!-- ── Phone 3: Voz Estudiantil ── -->
+        <div class="phone">
+            <div class="notch"><div class="notch-pill"></div></div>
+            <div class="screen" style="background:#0a0a0f">
+                <div style="margin-bottom:10px">
+                    <div class="s-name" style="font-size:17px">Voz Estudiantil</div>
+                    <div class="s-sub">Di lo que quieras</div>
+                </div>
+                <div style="background:#1a1a26;border-radius:8px;padding:7px;margin-bottom:9px;display:flex;align-items:center;gap:5px">
+                    <span style="font-size:9px;opacity:.4">🔍</span>
+                    <span style="font-size:8px;color:#4B5563">Buscar en Voz Estudiantil...</span>
+                </div>
+                <div style="display:flex;gap:4px;margin-bottom:9px">
+                    <span class="badge" style="background:rgba(124,58,237,.3);color:#9F67FF;border-radius:999px;padding:3px 8px">Todos</span>
+                    <span class="badge" style="border:1px solid rgba(255,255,255,.1);color:#9CA3AF;border-radius:999px;padding:3px 8px">Lo último</span>
+                    <span class="badge" style="border:1px solid rgba(255,255,255,.1);color:#9CA3AF;border-radius:999px;padding:3px 8px">❓</span>
+                </div>
+                <div style="background:rgba(124,58,237,.1);border:1px dashed rgba(124,58,237,.35);border-radius:8px;padding:7px;text-align:center;margin-bottom:9px">
+                    <span style="font-size:8px;color:#9F67FF;font-weight:700">⊕ Publicar anuncio</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-bar" style="background:#06B6D4"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;padding-left:6px">
+                        <span class="badge" style="background:rgba(6,182,212,.15);color:#06B6D4;font-size:6px;border-radius:4px">❓ Pregunta</span>
+                        <span style="font-size:7px;color:#9CA3AF">2d</span>
+                    </div>
+                    <div style="padding-left:6px">
+                        <div style="font-size:9px;font-weight:700;color:#fff;margin-bottom:2px">¿Mapi o Thomas?</div>
+                        <div style="font-size:7.5px;color:#9CA3AF;margin-bottom:4px">La pregunta del siglo</div>
+                        <div style="font-size:7px;color:#6B7280;font-style:italic;margin-bottom:4px">— Angelo</div>
+                        <div style="display:flex;gap:7px">
+                            <span class="act">♡ 2</span>
+                            <span class="act">↑</span>
+                            <span class="act">⚑</span>
+                            <span class="act">💬 10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-bar" style="background:#7C3AED"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;padding-left:6px">
+                        <span class="badge" style="background:rgba(124,58,237,.2);color:#9F67FF;font-size:6px;border-radius:4px">💬 Debate</span>
+                        <span style="font-size:7px;color:#9CA3AF">3d</span>
+                    </div>
+                    <div style="padding-left:6px">
+                        <div style="font-size:9px;font-weight:700;color:#fff;margin-bottom:2px">Los de Talento, es tan‑ Lento????</div>
+                        <div style="font-size:7px;color:#9CA3AF;margin-bottom:2px">— Peter Josép...</div>
+                        <div style="display:flex;gap:7px">
+                            <span class="act">♡ 1</span>
+                            <span class="act">💬 4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-bar" style="background:#06B6D4"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;padding-left:6px">
+                        <span class="badge" style="background:rgba(6,182,212,.15);color:#06B6D4;font-size:6px;border-radius:4px">❓ Pregunta</span>
+                        <span style="font-size:7px;color:#9CA3AF">29 de mar</span>
+                    </div>
+                    <div style="padding-left:6px">
+                        <div style="font-size:9px;font-weight:700;color:#fff">Continuación de la continuación</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabbar">
+                <div class="tab"><span class="t-ic">🏠</span><span class="t-lb">Inicio</span></div>
+                <div class="tab"><span class="t-ic">🔍</span><span class="t-lb">Buscar</span></div>
+                <div class="tab"><span class="t-ic">🎓</span><span class="t-lb">Operati.</span></div>
+                <div class="tab on"><span class="t-ic">💬</span><span class="t-lb" style="color:#9F67FF">Chat</span></div>
+                <div class="tab"><span class="t-ic">🏪</span><span class="t-lb">Tienda</span></div>
+                <div class="tab"><span class="t-ic">🔔</span><span class="t-lb">Notif.</span></div>
+            </div>
+        </div>
+
+        <!-- ── Phone 4: Operativos ── -->
+        <div class="phone">
+            <div class="notch"><div class="notch-pill"></div></div>
+            <div class="screen" style="background:#0a0a0f">
+                <div class="s-name" style="font-size:20px;margin-bottom:12px">Operativos</div>
+
+                <div style="display:flex;gap:7px;margin-bottom:10px">
+                    <div style="flex:1;background:#1a1a26;border-radius:9px;padding:8px;text-align:center;border:1px solid rgba(255,255,255,.07)">
+                        <span style="font-size:7.5px;color:#9CA3AF">❓ Necesito ayuda</span>
+                    </div>
+                    <div style="flex:1;background:var(--purple);border-radius:9px;padding:8px;text-align:center">
+                        <span style="font-size:7.5px;color:#fff;font-weight:700">🎓 Puedo ayudar</span>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:4px;margin-bottom:9px;overflow:hidden">
+                    <span class="badge" style="background:rgba(124,58,237,.3);color:#9F67FF;border-radius:999px;padding:2px 7px">Monitoría</span>
+                    <span class="badge" style="border:1px solid rgba(255,255,255,.1);color:#9CA3AF;border-radius:999px;padding:2px 7px">Grupo</span>
+                    <span class="badge" style="border:1px solid rgba(245,158,11,.3);color:#F59E0B;border-radius:999px;padding:2px 7px">Préstamo</span>
+                </div>
+
+                <!-- Monitor 1 -->
+                <div class="card">
+                    <div class="card-bar" style="background:#7C3AED"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;padding-left:6px">
+                        <div style="font-size:10px;font-weight:800;color:#fff">🎓 Samuel</div>
+                        <div style="display:flex;gap:3px">
+                            <span class="badge" style="background:rgba(6,182,212,.15);color:#06B6D4;font-size:5.5px;border-radius:4px">Oficial</span>
+                            <span class="badge" style="background:rgba(16,185,129,.15);color:#10B981;font-size:5.5px;border-radius:4px">$15k/hr</span>
+                        </div>
+                    </div>
+                    <div style="padding-left:6px">
+                        <span class="tag" style="display:inline-block;margin-bottom:4px">Inglés III</span>
+                        <div style="font-size:7px;color:#9CA3AF;margin-bottom:5px;line-height:1.5">Monitor del centro de plurilingüismo de la universidad del magdalena</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="font-size:6.5px;color:#6B7280">Presencial en la U</span>
+                            <span style="background:#10B981;color:#fff;font-size:6.5px;font-weight:700;padding:3px 8px;border-radius:7px">WhatsApp Contactar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitor 2 -->
+                <div class="card">
+                    <div class="card-bar" style="background:#06B6D4"></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;padding-left:6px">
+                        <div style="font-size:10px;font-weight:800;color:#fff">🎓 Daniel</div>
+                        <span class="badge" style="background:rgba(124,58,237,.15);color:#9F67FF;font-size:5.5px;border-radius:4px">Sin costo</span>
+                    </div>
+                    <div style="padding-left:6px">
+                        <span class="tag" style="display:inline-block;margin-bottom:4px">Matemáticas Discretas</span>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="font-size:6.5px;color:#6B7280">Presencial en la U</span>
+                            <span style="background:#10B981;color:#fff;font-size:6.5px;font-weight:700;padding:3px 8px;border-radius:7px">Contactar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabbar">
+                <div class="tab"><span class="t-ic">🏠</span><span class="t-lb">Inicio</span></div>
+                <div class="tab"><span class="t-ic">🔍</span><span class="t-lb">Buscar</span></div>
+                <div class="tab on"><span class="t-ic">🎓</span><span class="t-lb" style="color:#9F67FF">Operati.</span></div>
+                <div class="tab"><span class="t-ic">💬</span><span class="t-lb">Chat</span></div>
+                <div class="tab"><span class="t-ic">🏪</span><span class="t-lb">Tienda</span></div>
+                <div class="tab"><span class="t-ic">🔔</span><span class="t-lb">Notif.</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scroll dots -->
+    <div class="dots" id="phoneDots">
+        <div class="dot on" style="width:20px"></div>
+        <div class="dot" style="width:8px"></div>
+        <div class="dot" style="width:8px"></div>
+        <div class="dot" style="width:8px"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MANIFESTO
+════════════════════════════════════════════ -->
+<section id="manifesto">
+    <p class="section-label reveal">El Manifiesto</p>
+
+    <blockquote class="mani-quote reveal" style="transition-delay:.1s">
+        "Dentro de 5 años, alguien abrirá un documento<br>
+        que subiste hoy y pasará el parcial.<br>
+        <em>Eso es inmortalidad universitaria.</em>"
+    </blockquote>
+    <p class="mani-attr reveal" style="transition-delay:.2s">— Manifiesto Mach-T</p>
+
+    <div class="mani-list">
+        <div class="mani-item reveal" style="transition-delay:.05s">
+            <div class="mani-ic" style="background:rgba(6,182,212,.12)">📖</div>
+            <div>
+                <h3>El conocimiento no debe morir</h3>
+                <p>Cada semestre llegan estudiantes sin saber qué profe explica bien. Mach-T captura ese conocimiento y lo hace accesible para siempre.</p>
+            </div>
+        </div>
+
+        <div class="mani-item reveal" style="transition-delay:.15s">
+            <div class="mani-ic" style="background:rgba(245,158,11,.12)">💬</div>
+            <div>
+                <h3>La verdad que nadie dice</h3>
+                <p>Cuál profe realmente enseña. Esa info existe en mensajes de WhatsApp que se borran. En Mach-T, se escribe y se queda.</p>
+            </div>
+        </div>
+
+        <div class="mani-item reveal" style="transition-delay:.25s">
+            <div class="mani-ic" style="background:rgba(239,68,68,.12)">🤝</div>
+            <div>
+                <h3>La economía estudiantil</h3>
+                <p>Libros acumulando polvo en cuartos. Calculadoras que alguien necesita y no puede comprar nueva. Mach-T conecta sin intermediarios.</p>
+            </div>
+        </div>
+
+        <div class="mani-item reveal" style="transition-delay:.35s">
+            <div class="mani-ic" style="background:rgba(124,58,237,.12)">🏆</div>
+            <div>
+                <h3>Comunidad real, no virtual</h3>
+                <p>Tu perfil muestra lo que has aportado. Los que más contribuyen, más se ven. No es ego — es la reputación que vale.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     DOWNLOAD
+════════════════════════════════════════════ -->
+<section id="download">
+    <p class="section-label reveal">Únete ahora</p>
+    <h2 class="dl-title reveal" style="transition-delay:.1s">
+        Ya está en<br>
+        <span class="dl-grad">Play Store</span>
+    </h2>
+    <p class="dl-sub reveal" style="transition-delay:.2s">
+        Gratis. Para estudiantes de Unimag.<br>
+        Únete a los que ya la usan.
+    </p>
+
+    <div class="dl-btns reveal" style="transition-delay:.3s">
+        <a href="https://play.google.com/store/apps/details?id=com.eseate.macht"
+           target="_blank" rel="noopener" class="btn-dl-play">
+            <svg width="24" height="26" viewBox="0 0 22 24" fill="none"><path d="M1 1.5L20 12L1 22.5V1.5Z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <div class="store-text">
+                <span class="store-sub">Disponible en</span>
+                <span class="store-name" style="font-size:18px">Google Play</span>
+            </div>
+        </a>
+
+        <div class="btn-dl-soon">
+            <svg width="22" height="26" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
+            <div class="store-text">
+                <span style="font-size:11px;opacity:.6">Próximamente en</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:17px;font-weight:700">App Store</span>
+                    <span class="soon-pill">Pronto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+    <p>Mach-T · Construida por <span>estudiantes de Unimag</span>, para estudiantes de Unimag</p>
+    <p style="margin-top:6px;font-size:11px;opacity:.45">Universidad del Magdalena · Santa Marta, Colombia</p>
+</footer>
+
+<script>
+    // ── Scroll reveal ──
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Floating particles ──
+    const colors = ['#7C3AED','#06B6D4','#EC4899','#10B981','#F59E0B'];
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 28; i++) {
+        const p = document.createElement('div');
+        p.className = 'pt';
+        const size = Math.random() * 3 + 1;
+        p.style.cssText = `
+            left:${Math.random()*100}%;
+            top:${Math.random()*100}%;
+            width:${size}px; height:${size}px;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            animation: float ${4 + Math.random()*5}s ease-in-out ${Math.random()*4}s infinite;
+        `;
+        container.appendChild(p);
+    }
+
+    // ── Phone scroll dots ──
+    const scroll = document.getElementById('phonesScroll');
+    const dots   = document.querySelectorAll('#phoneDots .dot');
+    const PHONE_COUNT = 4;
+
+    scroll.addEventListener('scroll', () => {
+        const idx = Math.round(scroll.scrollLeft / (scroll.scrollWidth / PHONE_COUNT));
+        dots.forEach((d, i) => {
+            d.classList.toggle('on', i === idx);
+            d.style.width = i === idx ? '20px' : '8px';
+        });
+    }, { passive: true });
+</script>
+</body>
+</html>
