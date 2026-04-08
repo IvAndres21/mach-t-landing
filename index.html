@@ -239,23 +239,37 @@
 
         .scroll-cue {
             position: absolute;
-            bottom: 28px; left: 50%;
+            bottom: 32px; left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            color: var(--subtext);
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: .08em;
-            opacity: .45;
+            gap: 10px;
             z-index: 1;
+            animation: fadeUp .8s ease 1.2s both;
+        }
+        .scroll-cue-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .18em;
+            color: var(--purple-light);
+            text-transform: uppercase;
+            background: rgba(124,58,237,.15);
+            border: 1px solid rgba(124,58,237,.35);
+            border-radius: 999px;
+            padding: 5px 14px;
+            animation: blink 2.5s ease-in-out infinite;
+        }
+        .chevrons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
         .chevron {
-            width: 16px; height: 16px;
-            border-right: 2px solid var(--subtext);
-            border-bottom: 2px solid var(--subtext);
+            width: 18px; height: 18px;
+            border-right: 2.5px solid var(--purple-light);
+            border-bottom: 2.5px solid var(--purple-light);
             transform: rotate(45deg);
             animation: float 1.8s ease-in-out infinite;
         }
@@ -652,8 +666,12 @@
     </div>
 
     <div class="scroll-cue">
-        <span>DESLIZA</span>
-        <div class="chevron"></div>
+        <span class="scroll-cue-label">Desliza</span>
+        <div class="chevrons">
+            <div class="chevron" style="opacity:.35;animation:float 1.6s ease-in-out infinite"></div>
+            <div class="chevron" style="opacity:.65;animation:float 1.6s ease-in-out .18s infinite"></div>
+            <div class="chevron" style="opacity:1; animation:float 1.6s ease-in-out .36s infinite"></div>
+        </div>
     </div>
 </section>
 
