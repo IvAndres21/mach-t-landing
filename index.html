@@ -135,6 +135,13 @@
             animation: floatSlow 5s ease-in-out infinite;
             display: inline-block;
         }
+        .logo-wrap img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 24px rgba(124,58,237,.6));
+        }
 
         .hero-chip {
             display: inline-flex;
@@ -599,36 +606,8 @@
     <div class="particles" id="particles"></div>
 
     <div class="hero-content">
-        <!-- Pixel-art penguin SVG -->
         <div class="logo-wrap">
-            <svg width="90" height="100" viewBox="0 0 90 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Graduation cap -->
-                <rect x="20" y="8" width="50" height="6" rx="2" fill="#7C3AED"/>
-                <rect x="40" y="2" width="10" height="8" rx="1" fill="#5B21B6"/>
-                <rect x="62" y="12" width="3" height="10" fill="#9F67FF"/>
-                <rect x="62" y="22" width="6" height="4" rx="1" fill="#F59E0B"/>
-                <!-- Body -->
-                <ellipse cx="45" cy="62" rx="26" ry="32" fill="#1e1e3a"/>
-                <!-- White belly -->
-                <ellipse cx="45" cy="66" rx="16" ry="22" fill="#e8e8f0"/>
-                <!-- Wings -->
-                <ellipse cx="17" cy="65" rx="8" ry="18" fill="#1e1e3a" transform="rotate(-10 17 65)"/>
-                <ellipse cx="73" cy="65" rx="8" ry="18" fill="#1e1e3a" transform="rotate(10 73 65)"/>
-                <!-- Eyes -->
-                <circle cx="37" cy="52" r="5" fill="white"/>
-                <circle cx="53" cy="52" r="5" fill="white"/>
-                <circle cx="38" cy="53" r="2.5" fill="#111"/>
-                <circle cx="54" cy="53" r="2.5" fill="#111"/>
-                <circle cx="38.8" cy="52.2" r=".9" fill="white"/>
-                <circle cx="54.8" cy="52.2" r=".9" fill="white"/>
-                <!-- Beak -->
-                <path d="M40 60 L45 66 L50 60 Z" fill="#F59E0B"/>
-                <!-- Feet -->
-                <ellipse cx="36" cy="94" rx="8" ry="4" fill="#F59E0B"/>
-                <ellipse cx="54" cy="94" rx="8" ry="4" fill="#F59E0B"/>
-                <!-- Purple sheen on head -->
-                <ellipse cx="45" cy="38" rx="18" ry="10" fill="#7C3AED" opacity=".45"/>
-            </svg>
+            <img src="icon.png" alt="Mach-T">
         </div>
 
         <div class="hero-chip">Universidad del Magdalena</div>
