@@ -321,16 +321,20 @@
         }
         .chevrons {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             gap: 2px;
         }
         .chevron {
-            width: 18px; height: 18px;
+            width: 14px; height: 14px;
             border-right: 2.5px solid var(--purple-light);
             border-bottom: 2.5px solid var(--purple-light);
-            transform: rotate(45deg);
-            animation: float 1.8s ease-in-out infinite;
+            transform: rotate(-45deg);
+            animation: floatH 1.8s ease-in-out infinite;
+        }
+        @keyframes floatH {
+            0%,100% { transform: rotate(-45deg) translateX(0); }
+            50%      { transform: rotate(-45deg) translateX(5px); }
         }
 
         /* ── PITCH ── */
@@ -842,18 +846,10 @@
 <!-- ══════════════════════════════════════════
      STATS
 ════════════════════════════════════════════ -->
-<div class="stats-bar reveal">
-    <div class="stat-item">
-        <span class="stat-n purple" data-count="5">5</span>
-        <span class="stat-l">Módulos</span>
-    </div>
-    <div class="stat-item">
+<div class="stats-bar reveal" style="justify-content:center">
+    <div class="stat-item" style="border-radius:18px;max-width:240px">
         <span class="stat-n cyan">Unimag</span>
         <span class="stat-l">Exclusivo</span>
-    </div>
-    <div class="stat-item">
-        <span class="stat-n green">Gratis</span>
-        <span class="stat-l">Para siempre</span>
     </div>
 </div>
 
@@ -861,17 +857,15 @@
      TESTIMONIAL
 ════════════════════════════════════════════ -->
 <section id="testimonial">
-    <div class="testi-card reveal">
-        <p class="testi-text">
-            "Subí un taller de ecuaciones diferenciales que me costó dos semanas. A las 24 horas ya tenía 12 votos positivos. Alguien lo aprovechó — eso no tiene precio."
+    <div class="testi-card reveal" style="background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(124,58,237,.07));border-color:rgba(6,182,212,.2);text-align:center">
+        <div style="font-size:36px;margin-bottom:14px">🤝</div>
+        <p class="testi-text" style="font-style:normal;font-weight:700;font-size:clamp(16px,4.5vw,22px);color:#fff;margin-bottom:10px">
+            La educación mejora cuando nos ayudamos entre todos.
         </p>
-        <div class="testi-author">
-            <div class="testi-avatar">🎓</div>
-            <div>
-                <div class="testi-name">Estudiante de Ing. Electrónica</div>
-                <div class="testi-role">Universidad del Magdalena</div>
-            </div>
-        </div>
+        <p style="font-size:clamp(13px,3.5vw,15px);color:var(--subtext);line-height:1.7;margin-bottom:0">
+            Cada apunte que compartes, cada duda que respondes,<br>
+            construye una universidad más justa para los que vienen después.
+        </p>
     </div>
 </section>
 
