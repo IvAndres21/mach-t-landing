@@ -442,10 +442,19 @@
             overflow-x: auto;
             padding: 20px 24px 30px;
             scroll-snap-type: x mandatory;
+            scroll-padding-left: 24px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
         .phones-scroll::-webkit-scrollbar { display: none; }
+        /* Trailing spacer so the last phone can snap fully into view */
+        .phones-scroll::after {
+            content: '';
+            display: block;
+            flex-shrink: 0;
+            width: 24px;
+            min-width: 24px;
+        }
 
         .phone {
             flex-shrink: 0;
@@ -454,7 +463,7 @@
             border-radius: 34px;
             border: 2px solid rgba(255,255,255,.13);
             overflow: hidden;
-            scroll-snap-align: center;
+            scroll-snap-align: start;
             box-shadow: 0 24px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
             animation: floatSlow 5s ease-in-out infinite;
         }
@@ -642,9 +651,113 @@
             background: linear-gradient(90deg, transparent, var(--border), transparent);
             margin: 0 24px;
         }
+
+        /* ── STATS ── */
+        .stats-bar {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 0;
+            padding: 0 24px 60px;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 20px 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            position: relative;
+            transition: border-color .3s, background .3s;
+        }
+        .stat-item:first-child { border-radius: 18px 0 0 18px; }
+        .stat-item:last-child  { border-radius: 0 18px 18px 0; }
+        .stat-item:not(:first-child) { border-left: none; }
+        .stat-item:hover { background: #16161f; border-color: rgba(124,58,237,.4); z-index: 1; }
+        .stat-n {
+            display: block;
+            font-size: clamp(22px, 6vw, 32px);
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -.02em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-n.purple { color: var(--purple-light); }
+        .stat-n.cyan   { color: var(--cyan); }
+        .stat-n.green  { color: var(--green); }
+        .stat-l {
+            display: block;
+            font-size: 11px;
+            color: var(--subtext);
+            font-weight: 600;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        /* ── TESTIMONIAL ── */
+        #testimonial {
+            padding: 0 24px 70px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .testi-card {
+            background: linear-gradient(135deg, rgba(124,58,237,.08), rgba(6,182,212,.05));
+            border: 1px solid rgba(124,58,237,.2);
+            border-radius: 24px;
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .testi-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px; left: 18px;
+            font-size: 100px;
+            font-weight: 900;
+            color: rgba(124,58,237,.12);
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+        .testi-text {
+            font-size: clamp(14px, 3.8vw, 17px);
+            font-style: italic;
+            color: rgba(255,255,255,.85);
+            line-height: 1.7;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .testi-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .testi-avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+        .testi-name  { font-size: 13px; font-weight: 700; color: #fff; }
+        .testi-role  { font-size: 11px; color: var(--subtext); }
+
+        /* ── PROGRESS BAR ── */
+        .page-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--cyan));
+            width: 0%;
+            z-index: 9999;
+            transition: width .1s linear;
+        }
     </style>
 </head>
 <body>
+<div class="page-progress" id="pageProgress"></div>
 
 <!-- ══════════════════════════════════════════
      HERO
@@ -695,17 +808,13 @@
                 <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
                 <div class="store-text">
                     <span style="font-size:10px;opacity:.6">Próximamente en</span>
-                    <div style="display:flex;align-items:center;gap:7px">
-                        <span style="font-size:16px;font-weight:700;color:#9CA3AF">App Store</span>
-                        <span class="soon-pill">Pronto</span>
-                    </div>
+                    <span style="font-size:16px;font-weight:700;color:#9CA3AF">App Store</span>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="scroll-cue">
-        <span class="scroll-cue-label">Desliza</span>
         <div class="chevrons">
             <div class="chevron" style="opacity:.35;animation:float 1.6s ease-in-out infinite"></div>
             <div class="chevron" style="opacity:.65;animation:float 1.6s ease-in-out .18s infinite"></div>
@@ -728,6 +837,42 @@
         talleres que costaron un fin de semana. Todo eso tiene valor real.
         Mach-T lo captura, lo organiza y lo hace accesible para siempre.
     </p>
+</section>
+
+<!-- ══════════════════════════════════════════
+     STATS
+════════════════════════════════════════════ -->
+<div class="stats-bar reveal">
+    <div class="stat-item">
+        <span class="stat-n purple" data-count="5">5</span>
+        <span class="stat-l">Módulos</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-n cyan">Unimag</span>
+        <span class="stat-l">Exclusivo</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-n green">Gratis</span>
+        <span class="stat-l">Para siempre</span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TESTIMONIAL
+════════════════════════════════════════════ -->
+<section id="testimonial">
+    <div class="testi-card reveal">
+        <p class="testi-text">
+            "Subí un taller de ecuaciones diferenciales que me costó dos semanas. A las 24 horas ya tenía 12 votos positivos. Alguien lo aprovechó — eso no tiene precio."
+        </p>
+        <div class="testi-author">
+            <div class="testi-avatar">🎓</div>
+            <div>
+                <div class="testi-name">Estudiante de Ing. Electrónica</div>
+                <div class="testi-role">Universidad del Magdalena</div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <div class="divider"></div>
@@ -1172,10 +1317,7 @@
             <svg width="22" height="26" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
             <div class="store-text">
                 <span style="font-size:11px;opacity:.6">Próximamente en</span>
-                <div style="display:flex;align-items:center;gap:8px">
-                    <span style="font-size:17px;font-weight:700">App Store</span>
-                    <span class="soon-pill">Pronto</span>
-                </div>
+                <span style="font-size:17px;font-weight:700">App Store</span>
             </div>
         </div>
     </div>
@@ -1216,14 +1358,45 @@
     // ── Phone scroll dots ──
     const scroll = document.getElementById('phonesScroll');
     const dots   = document.querySelectorAll('#phoneDots .dot');
-    const PHONE_COUNT = 4;
+    const phones = document.querySelectorAll('.phone');
 
-    scroll.addEventListener('scroll', () => {
-        const idx = Math.round(scroll.scrollLeft / (scroll.scrollWidth / PHONE_COUNT));
-        dots.forEach((d, i) => {
-            d.classList.toggle('on', i === idx);
-            d.style.width = i === idx ? '20px' : '8px';
+    function updateDots() {
+        // Find which phone's left edge is closest to scroll-padding (24px)
+        const target = scroll.scrollLeft + 24;
+        let closest = 0, minDist = Infinity;
+        phones.forEach((p, i) => {
+            const dist = Math.abs(p.offsetLeft - target);
+            if (dist < minDist) { minDist = dist; closest = i; }
         });
+        dots.forEach((d, i) => {
+            d.classList.toggle('on', i === closest);
+            d.style.width = i === closest ? '20px' : '8px';
+        });
+    }
+
+    scroll.addEventListener('scroll', updateDots, { passive: true });
+
+    // Auto-advance every 3s, pause on user interaction
+    let autoPlay = true;
+    let autoIdx  = 0;
+    function snapTo(idx) {
+        const phone = phones[idx];
+        if (!phone) return;
+        scroll.scrollTo({ left: phone.offsetLeft - 24, behavior: 'smooth' });
+    }
+    const autoTimer = setInterval(() => {
+        if (!autoPlay) return;
+        autoIdx = (autoIdx + 1) % phones.length;
+        snapTo(autoIdx);
+    }, 3200);
+    scroll.addEventListener('touchstart', () => { autoPlay = false; }, { passive: true });
+    scroll.addEventListener('mousedown',  () => { autoPlay = false; });
+
+    // ── Page progress bar ──
+    const bar = document.getElementById('pageProgress');
+    window.addEventListener('scroll', () => {
+        const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+        bar.style.width = pct + '%';
     }, { passive: true });
 </script>
 </body>
