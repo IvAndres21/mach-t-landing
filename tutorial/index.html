@@ -77,8 +77,12 @@ body {
 #selector.hide { opacity: 0; pointer-events: none; }
 .sel-logo {
   width: 88px; height: 88px; border-radius: 22px;
+  background: linear-gradient(135deg, #A78BFA, #7C3AED 60%, #5B21B6);
   box-shadow: 0 10px 40px rgba(124,58,237,.35), 0 0 0 1px rgba(255,255,255,.05);
   margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 44px; font-weight: 900; letter-spacing: -2px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 .sel-title { font-size: 28px; font-weight: 800; letter-spacing: -.6px; margin-bottom: 6px; text-align: center; }
 .sel-sub { color: var(--text-sec); font-size: 15px; margin-bottom: 36px; text-align: center; max-width: 320px; }
@@ -831,6 +835,19 @@ body {
 .subtitle--mid-top    { top: 32%; bottom: auto; }
 .subtitle--mid-bottom { top: auto; bottom: 36%; }
 .subtitle--bottom { bottom: calc(30px + var(--safe-bottom)); top: auto; }
+.tap-zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 28%;
+  z-index: 28;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .18s ease;
+}
+.tap-zone--left  { left: 0; }
+.tap-zone--right { right: 0; }
+.tap-zone.pulse  { background-color: rgba(167,139,250,.14); }
 .subtitle.leaving { opacity: 0; transform: translateY(8px); }
 .subtitle.entering { opacity: 0; transform: translateY(10px); }
 .subtitle b {
@@ -853,9 +870,14 @@ body {
 }
 .intro-logo {
   width: 84px; height: 84px; border-radius: 22px;
+  background: linear-gradient(135deg, #A78BFA, #7C3AED 60%, #5B21B6);
   box-shadow: 0 10px 40px rgba(124,58,237,.5);
   margin-bottom: 20px;
   animation: float 3s ease-in-out infinite;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 42px; font-weight: 900;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -2px;
 }
 @keyframes float {
   0%,100% { transform: translateY(0); }
@@ -912,7 +934,7 @@ body {
 
   <!-- Pantalla de selección -->
   <div id="selector">
-    <img src="icon.png" class="sel-logo" alt="Mach-T">
+    <div class="sel-logo">M</div>
     <h1 class="sel-title">Tutoriales</h1>
     <p class="sel-sub">Aprende a publicar en Mach-T en menos de un minuto</p>
     <div class="sel-cards">
@@ -946,6 +968,9 @@ body {
     <div id="screens"><div class="screen" id="persistent-screen"></div></div>
     <div class="finger" id="finger"></div>
     <div class="subtitle" id="subtitle">Cargando...</div>
+    <!-- Zonas táctiles: izquierda = atrás, derecha = adelante -->
+    <div class="tap-zone tap-zone--left"  id="tap-prev" aria-label="Paso anterior"></div>
+    <div class="tap-zone tap-zone--right" id="tap-next" aria-label="Paso siguiente"></div>
 
     <!-- Capa meme / shitpost (overlay, sin tocar el tutorial serio) -->
     <div class="meme-layer" id="meme-layer">
@@ -960,7 +985,7 @@ body {
 
   <!-- Intro overlay -->
   <div class="intro-outro" id="intro" style="display:none;">
-    <img src="icon.png" class="intro-logo" alt="">
+    <div class="intro-logo">M</div>
     <div class="intro-eyebrow" id="intro-eyebrow">Mach-T · Tutorial</div>
     <div class="intro-title" id="intro-title"></div>
     <div class="intro-sub" id="intro-sub"></div>
@@ -2144,6 +2169,51 @@ document.getElementById('outro-home').addEventListener('click', () => {
   document.getElementById('selector').classList.remove('hide');
   clearTimeout(timer);
   clearTimeout(tapTimer);
+});
+
+// ═════════════════════════════════════════════════════════════════
+// Navegación manual: tocar izquierda = atrás, derecha = adelante
+// ═════════════════════════════════════════════════════════════════
+function jumpToStep(newIdx) {
+  if (!currentSteps) return;
+  const target = Math.max(0, Math.min(newIdx, currentSteps.length - 1));
+  if (target === stepIdx) return;
+  clearTimeout(timer);
+  clearTimeout(tapTimer);
+  clearTimeout(fingerTimer);
+  clearTimeout(subTimer);
+  lastScreenType = null;
+  lastSubtitle = '';
+  lastSubPos = '';
+  const intro = document.getElementById('intro');
+  const outro = document.getElementById('outro');
+  if (intro.style.display !== 'none') intro.style.display = 'none';
+  if (outro.style.display !== 'none') {
+    outro.style.display = 'none';
+    document.getElementById('subtitle').style.display = 'block';
+  }
+  if (typeof hideMemes === 'function') hideMemes();
+  resetZoom(false);
+  stepIdx = target;
+  runStep();
+}
+
+function pulseZone(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('pulse');
+  setTimeout(() => el.classList.remove('pulse'), 220);
+}
+
+document.getElementById('tap-prev').addEventListener('click', () => {
+  if (!document.getElementById('stage').classList.contains('active')) return;
+  pulseZone('tap-prev');
+  jumpToStep(stepIdx - 1);
+});
+document.getElementById('tap-next').addEventListener('click', () => {
+  if (!document.getElementById('stage').classList.contains('active')) return;
+  pulseZone('tap-next');
+  jumpToStep(stepIdx + 1);
 });
 </script>
 </body>
