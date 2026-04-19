@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#09090D">
+<title>Mach-T — Tutorial</title>
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090D;
+  --surface: #13141B;
+  --surface-2: #1A1C25;
+  --elevated: #202331;
+  --border: #2A2E3D;
+  --primary: #7C3AED;
+  --primary-light: #A78BFA;
+  --primary-dark: #5B21B6;
+  --primary-faded: rgba(124, 58, 237, 0.18);
+  --primary-glow: rgba(124, 58, 237, 0.35);
+  --text: #FAFAFC;
+  --text-sec: #B3B8C9;
+  --text-muted: #6B7186;
+  --success: #22C55E;
+  --success-faded: rgba(34, 197, 94, 0.15);
+  --warning: #F59E0B;
+  --warning-faded: rgba(245, 158, 11, 0.12);
+  --error: #EF4444;
+  --tab-active-bg: rgba(124, 58, 237, 0.16);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.4;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+#app {
+  position: relative;
+  width: 100vw;
+  max-width: 460px;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ─── BG orbs ─── */
+.bg-orbs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .4; }
+.orb-1 { width: 320px; height: 320px; background: var(--primary); top: -120px; right: -80px; animation: orb1 16s ease-in-out infinite; }
+.orb-2 { width: 280px; height: 280px; background: #3B82F6; bottom: -100px; left: -60px; animation: orb2 20s ease-in-out infinite; opacity: .25; }
+@keyframes orb1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30px, 40px); } }
+@keyframes orb2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px, -30px); } }
+
+/* ─── Selector inicial ─── */
+#selector {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 40px 24px;
+  background: radial-gradient(ellipse at top, rgba(124,58,237,.18), transparent 60%), var(--bg);
+  transition: opacity .5s ease;
+}
+#selector.hide { opacity: 0; pointer-events: none; }
+.sel-logo {
+  width: 88px; height: 88px; border-radius: 22px;
+  box-shadow: 0 10px 40px rgba(124,58,237,.35), 0 0 0 1px rgba(255,255,255,.05);
+  margin-bottom: 18px;
+}
+.sel-title { font-size: 28px; font-weight: 800; letter-spacing: -.6px; margin-bottom: 6px; text-align: center; }
+.sel-sub { color: var(--text-sec); font-size: 15px; margin-bottom: 36px; text-align: center; max-width: 320px; }
+.sel-cards { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 340px; }
+.sel-card {
+  background: linear-gradient(135deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 20px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  text-align: left;
+  color: var(--text);
+  font-family: inherit;
+}
+.sel-card:hover, .sel-card:active {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 12px 32px rgba(124,58,237,.22);
+}
+.sel-card-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--primary-faded); color: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sel-card-body h3 { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+.sel-card-body p { font-size: 13px; color: var(--text-sec); }
+.sel-footer { margin-top: 28px; color: var(--text-muted); font-size: 12px; display: flex; gap: 6px; align-items: center; }
+
+/* ─── Stage (pantalla de tutorial) ─── */
+#stage {
+  position: absolute; inset: 0; z-index: 10;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s ease;
+  display: flex; flex-direction: column;
+}
+#stage.active { opacity: 1; pointer-events: auto; }
+
+#screens {
+  position: absolute; inset: 0;
+  padding-top: calc(var(--safe-top) + 14px);
+  padding-bottom: 140px;
+  overflow: hidden;
+  transform-origin: center top;
+  transition: transform .85s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+}
+.screen {
+  position: absolute; inset: 0;
+  padding-top: calc(var(--safe-top) + 14px);
+  padding-bottom: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+.screen::-webkit-scrollbar { display: none; }
+
+/* ─── Header flotante ─── */
+.app-header {
+  margin: 8px 14px 18px;
+  background: rgba(19,20,27,.9);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.app-header .h-left { display: flex; flex-direction: column; }
+.app-header .welcome { font-size: 13px; color: var(--text-sec); }
+.app-header .name { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.app-header .name-dot { color: var(--primary-light); font-size: 14px; }
+.btn-pill {
+  background: var(--primary);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 700; font-size: 14px;
+  display: flex; align-items: center; gap: 6px;
+  border: none;
+  box-shadow: 0 6px 18px rgba(124,58,237,.4);
+}
+
+.app-header-sub {
+  margin: 8px 14px 14px;
+  background: rgba(19,20,27,.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.app-header-sub .back {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.app-header-sub .title { font-size: 17px; font-weight: 700; }
+
+/* ─── Form ─── */
+.form { padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; display: block; }
+.form-label .req { color: var(--primary-light); margin-left: 2px; }
+.form-label .count { color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+.input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 14px;
+  font-size: 15px; color: var(--text);
+  font-family: inherit;
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  min-height: 50px;
+  transition: border-color .2s ease, background .2s ease;
+}
+.input.focused { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+.input .placeholder { color: var(--text-muted); flex: 1; }
+.input .value { flex: 1; color: var(--text); }
+.input .chev { color: var(--text-muted); }
+.input-icon { color: var(--text-muted); }
+
+.input-row { display: flex; gap: 12px; }
+.input-row > div { flex: 1; }
+
+.textarea { min-height: 64px; align-items: flex-start; padding-top: 14px; }
+
+/* ─── Chips ─── */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.chip {
+  background: var(--primary-faded);
+  color: var(--primary-light);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+
+/* ─── Dropdowns de sugerencias ─── */
+.suggest {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-top: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0,0,0,.4);
+}
+.suggest--above {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+.suggest-item {
+  padding: 13px 14px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.suggest-item:last-child { border-bottom: none; }
+.suggest-item.highlight { background: var(--primary-faded); color: var(--primary-light); }
+
+/* ─── Banner info ─── */
+.banner {
+  background: var(--primary-faded);
+  border: 1px solid rgba(124,58,237,.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--primary-light);
+  display: flex; gap: 10px; align-items: flex-start;
+  line-height: 1.4;
+}
+.banner .ico { flex-shrink: 0; margin-top: 1px; }
+
+/* ─── Warning mini ─── */
+.warn {
+  background: var(--warning-faded);
+  border: 1px solid rgba(245,158,11,.25);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--warning);
+  display: flex; gap: 8px; align-items: flex-start;
+  line-height: 1.4;
+}
+
+/* ─── Dropzone ─── */
+.dropzone {
+  border: 2px dashed var(--primary);
+  background: rgba(124,58,237,.06);
+  border-radius: 16px;
+  padding: 28px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center;
+}
+.dropzone.filled { border-style: solid; border-color: var(--success); background: rgba(34,197,94,.05); }
+.dropzone-icon {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--primary);
+}
+.dropzone.filled .dropzone-icon { color: var(--success); background: rgba(34,197,94,.15); border-radius: 50%; }
+.dropzone-text { font-weight: 600; color: var(--primary-light); font-size: 14px; }
+.dropzone.filled .dropzone-text { color: var(--success); }
+.dropzone-hint { font-size: 11px; color: var(--text-muted); }
+
+.file-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.file-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--error); color: #fff;
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.file-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.file-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* ─── Checkbox ─── */
+.check-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.check-row.on { border-color: var(--primary); background: rgba(124,58,237,.08); }
+.check {
+  width: 20px; height: 20px; border: 2px solid var(--text-muted); border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .2s ease;
+}
+.check.on { background: var(--primary); border-color: var(--primary); }
+.check.on::after {
+  content: '✓'; color: #fff; font-size: 13px; font-weight: 800;
+}
+.check-body { flex: 1; }
+.check-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.check-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* ─── Botón submit ─── */
+.submit {
+  background: var(--primary);
+  color: #fff;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  border: none;
+  box-shadow: 0 8px 24px rgba(124,58,237,.35);
+  margin-top: 4px;
+}
+.submit.ghost {
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-sec);
+}
+
+/* ─── Dropdown overlay ─── */
+.sheet {
+  position: absolute;
+  left: 12px; right: 12px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 8px;
+  box-shadow: 0 20px 48px rgba(0,0,0,.5);
+  z-index: 3;
+}
+.sheet-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-muted); font-weight: 700;
+  padding: 10px 12px 6px;
+}
+.sheet-item {
+  padding: 13px 12px;
+  font-size: 15px;
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 10px;
+}
+.sheet-item .sheet-ico { color: var(--primary-light); }
+.sheet-item.selected { background: var(--primary-faded); color: var(--primary-light); }
+
+/* ─── Modal estilo Android seleccionar archivo ─── */
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.65);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 20px;
+  z-index: 6;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-sel {
+  background: #fff;
+  color: #111;
+  border-radius: 20px;
+  width: 100%; max-width: 340px;
+  padding: 22px 20px 14px;
+}
+.modal-sel-title { font-size: 18px; font-weight: 500; color: #222; margin-bottom: 16px; }
+.modal-sel-list { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-bottom: 8px; }
+.modal-sel-btn {
+  padding: 12px 10px;
+  font-size: 13px; font-weight: 700; letter-spacing: .8px;
+  color: #05846a;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* ─── Toggle horario ─── */
+.toggle-seg {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  display: flex;
+}
+.toggle-opt {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-sec);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  text-align: center;
+}
+.toggle-opt.on { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(124,58,237,.35); }
+
+/* ─── Time picker ─── */
+.timepicker {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 10px;
+  display: flex; gap: 8px; align-items: stretch;
+}
+.tp-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tp-col-title { font-size: 10px; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; }
+.tp-wheel { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tp-faded { color: var(--text-muted); font-size: 12px; }
+.tp-current { color: var(--text); font-size: 18px; font-weight: 700; padding: 6px 0; border-top: 1px solid var(--primary); border-bottom: 1px solid var(--primary); width: 80px; text-align: center; }
+.tp-chev { color: var(--text-muted); font-size: 14px; }
+
+/* ─── Day chips ─── */
+.daychips { display: flex; flex-wrap: wrap; gap: 6px; }
+.daychip {
+  padding: 7px 14px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px; font-weight: 600;
+  color: var(--text-sec);
+}
+.daychip.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.daychip.off { opacity: .5; }
+
+/* ─── Horario de clases ─── */
+.class-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.class-row .day-badge {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+.class-row.empty .day-badge { background: var(--elevated); color: var(--text-muted); }
+.class-row-main { flex: 1; font-size: 13px; color: var(--text); }
+.class-row-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* ─── Photo grid ─── */
+.photo-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.photo-slot {
+  width: 80px; height: 80px;
+  border-radius: 12px;
+  border: 2px dashed var(--primary);
+  background: rgba(124,58,237,.06);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--primary);
+  font-size: 22px;
+  position: relative;
+}
+.photo-slot.has-img {
+  border-style: solid;
+  border-color: var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+.photo-slot .pri-badge {
+  position: absolute; top: 4px; left: 4px;
+  background: var(--primary); color: #fff;
+  font-size: 9px; font-weight: 700;
+  padding: 2px 5px; border-radius: 4px;
+}
+.photo-slot .x-badge {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(0,0,0,.7); color: #fff;
+  font-size: 10px; width: 16px; height: 16px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── Feed cards (Inicio / Tienda) ─── */
+.feed-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin: 0 14px 12px;
+  overflow: hidden;
+}
+.feed-card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px;
+}
+.badge-mini {
+  background: var(--primary-faded); color: var(--primary-light);
+  font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+}
+.badge-mini.green { background: var(--success-faded); color: var(--success); }
+.badge-mini.warn { background: var(--warning-faded); color: var(--warning); }
+.feed-card-body { padding: 0 12px 12px; }
+.feed-card-body .title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.feed-card-body .sub { font-size: 13px; color: var(--text-sec); margin-bottom: 10px; }
+.feed-card-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #555, #333);
+  border-radius: 10px;
+}
+.feed-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tag {
+  font-size: 11px; padding: 3px 8px; border-radius: 999px;
+  background: var(--primary-faded); color: var(--primary-light); font-weight: 600;
+}
+.feed-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
+.feed-meta-actions { display: flex; gap: 10px; }
+
+/* ─── Store product card ─── */
+.prod-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin: 0 14px 12px;
+  overflow: hidden;
+  display: flex;
+}
+.prod-card-info { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.prod-card-title { font-size: 14px; font-weight: 700; }
+.prod-card-sub { font-size: 11px; color: var(--text-sec); }
+.prod-card-price {
+  display: inline-block;
+  background: var(--primary-faded); color: var(--primary-light);
+  font-size: 14px; font-weight: 700; padding: 3px 8px; border-radius: 8px;
+  align-self: flex-start; margin-top: 4px;
+}
+.prod-card-img {
+  width: 100px;
+  background: linear-gradient(135deg, #aaa, #666);
+}
+
+/* ─── Tab bar ─── */
+.tabbar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(16,17,26,.92);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  padding: 8px 12px calc(10px + var(--safe-bottom));
+  display: flex; justify-content: space-around;
+  z-index: 4;
+}
+.tab-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 6px;
+  color: var(--text-muted);
+  font-size: 10px; font-weight: 600;
+  min-width: 48px;
+}
+.tab-item.active { color: var(--primary-light); }
+.tab-item.active .tab-pill {
+  background: var(--tab-active-bg);
+}
+.tab-pill {
+  width: 46px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+}
+
+/* ─── Teclado simulado ─── */
+.keyboard {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: #2d2d33;
+  padding: 10px 6px 18px;
+  z-index: 3;
+  animation: keybIn .3s ease;
+  pointer-events: none;
+}
+@keyframes keybIn {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.keyboard.hide { display: none; }
+.keyb-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 6px; }
+.keyb-key {
+  flex: 1; max-width: 32px;
+  height: 38px;
+  background: #5a5a62;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── Dedo ─── */
+.finger {
+  position: absolute;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  border: 2px solid rgba(255,255,255,.7);
+  box-shadow: 0 0 0 0 rgba(255,255,255,.4), 0 0 18px rgba(124,58,237,.55);
+  pointer-events: none;
+  z-index: 50;
+  transform: translate(-50%, -50%);
+  transition: left .5s cubic-bezier(.4,0,.2,1), top .5s cubic-bezier(.4,0,.2,1);
+  opacity: 0;
+}
+.finger.visible { opacity: 1; }
+.finger.tap { animation: tap .45s ease; }
+@keyframes tap {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(-50%, -50%) scale(.7); box-shadow: 0 0 0 18px rgba(124,58,237,.0); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.ripple {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: rgba(124,58,237,.5);
+  pointer-events: none;
+  z-index: 49;
+  transform: translate(-50%, -50%);
+  animation: ripple .7s ease-out forwards;
+}
+@keyframes ripple {
+  0%   { width: 12px; height: 12px; opacity: .9; }
+  100% { width: 80px; height: 80px; opacity: 0; }
+}
+
+/* ─── Subtitle ─── */
+.subtitle {
+  position: absolute;
+  left: 14px; right: 14px;
+  background: linear-gradient(135deg, rgba(20,14,40,.96), rgba(9,9,13,.96));
+  backdrop-filter: blur(14px);
+  border: 2px solid rgba(167,139,250,.55);
+  border-radius: 18px;
+  padding: 16px 18px;
+  z-index: 30;
+  font-size: 17px;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 1.38;
+  font-weight: 600;
+  letter-spacing: .1px;
+  text-shadow: 0 2px 6px rgba(0,0,0,.65);
+  transition: opacity .45s cubic-bezier(.4,0,.2,1), transform .45s cubic-bezier(.4,0,.2,1);
+  box-shadow:
+    0 0 0 4px rgba(124,58,237,.18),
+    0 18px 44px rgba(0,0,0,.65),
+    0 0 28px rgba(124,58,237,.4);
+  bottom: calc(30px + var(--safe-bottom));
+  top: auto;
+}
+.subtitle--top    { top: calc(30px + var(--safe-top)); bottom: auto; }
+.subtitle--mid-top    { top: 32%; bottom: auto; }
+.subtitle--mid-bottom { top: auto; bottom: 36%; }
+.subtitle--bottom { bottom: calc(30px + var(--safe-bottom)); top: auto; }
+.subtitle.leaving { opacity: 0; transform: translateY(8px); }
+.subtitle.entering { opacity: 0; transform: translateY(10px); }
+.subtitle b {
+  color: #E9DDFF;
+  font-weight: 800;
+  background: linear-gradient(180deg, rgba(167,139,250,.35), rgba(124,58,237,.28));
+  padding: 1px 6px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(167,139,250,.35);
+}
+
+/* ─── Intro / Outro ─── */
+.intro-outro {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 40px 24px;
+  background: radial-gradient(ellipse at center, rgba(124,58,237,.25), transparent 60%), var(--bg);
+  text-align: center;
+  z-index: 25;
+}
+.intro-logo {
+  width: 84px; height: 84px; border-radius: 22px;
+  box-shadow: 0 10px 40px rgba(124,58,237,.5);
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.intro-eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--primary-light);
+  margin-bottom: 10px;
+}
+.intro-title { font-size: 30px; font-weight: 800; letter-spacing: -.6px; max-width: 320px; margin-bottom: 12px; }
+.intro-sub { font-size: 15px; color: var(--text-sec); max-width: 320px; }
+
+.outro-title { font-size: 26px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 10px; }
+.outro-check {
+  width: 84px; height: 84px; border-radius: 50%;
+  background: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 44px;
+  margin-bottom: 18px;
+  animation: popIn .55s cubic-bezier(.68,-.55,.27,1.55);
+  box-shadow: 0 0 36px rgba(34,197,94,.4);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.3); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.outro-btns { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+.outro-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px; font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.outro-btn.primary { background: var(--primary); border-color: var(--primary); }
+
+/* ─── Utilidades ─── */
+.icon { width: 20px; height: 20px; flex-shrink: 0; }
+.icon-sm { width: 16px; height: 16px; }
+.icon-lg { width: 28px; height: 28px; }
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Pantalla de selección -->
+  <div id="selector">
+    <img src="icon.png" class="sel-logo" alt="Mach-T">
+    <h1 class="sel-title">Tutoriales</h1>
+    <p class="sel-sub">Aprende a publicar en Mach-T en menos de un minuto</p>
+    <div class="sel-cards">
+      <button class="sel-card" data-start="doc">
+        <div class="sel-card-icon">
+          <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <div class="sel-card-body">
+          <h3>Cómo subir un documento</h3>
+          <p>Parciales, talleres, apuntes, laboratorios</p>
+        </div>
+      </button>
+      <button class="sel-card" data-start="prod">
+        <div class="sel-card-icon">
+          <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        </div>
+        <div class="sel-card-body">
+          <h3>Cómo publicar en la tienda</h3>
+          <p>Vende a tus compañeros de la U</p>
+        </div>
+      </button>
+    </div>
+    <div class="sel-footer">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Graba tu pantalla mientras reproduces
+    </div>
+  </div>
+
+  <!-- Stage del tutorial -->
+  <div id="stage">
+    <div id="screens"><div class="screen" id="persistent-screen"></div></div>
+    <div class="finger" id="finger"></div>
+    <div class="subtitle" id="subtitle">Cargando...</div>
+  </div>
+
+  <!-- Intro overlay -->
+  <div class="intro-outro" id="intro" style="display:none;">
+    <img src="icon.png" class="intro-logo" alt="">
+    <div class="intro-eyebrow" id="intro-eyebrow">Mach-T · Tutorial</div>
+    <div class="intro-title" id="intro-title"></div>
+    <div class="intro-sub" id="intro-sub"></div>
+  </div>
+
+  <!-- Outro overlay -->
+  <div class="intro-outro" id="outro" style="display:none;">
+    <div class="outro-check">✓</div>
+    <div class="outro-title" id="outro-title">¡Listo!</div>
+    <div class="intro-sub" id="outro-sub"></div>
+    <div class="outro-btns">
+      <button class="outro-btn primary" id="outro-replay">Repetir</button>
+      <button class="outro-btn" id="outro-other">Ver el otro tutorial</button>
+      <button class="outro-btn" id="outro-home">Volver al inicio</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════
+// Íconos SVG comunes
+// ═════════════════════════════════════════════════════════════════
+const ico = {
+  back: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>`,
+  plus: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  chev: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>`,
+  cloud: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="34" height="34"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>`,
+  checkOk: `<svg viewBox="0 0 24 24" fill="currentColor" width="34" height="34"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10" stroke="#fff" stroke-width="2.5" fill="none"/></svg>`,
+  profile: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  book: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  school: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+  clock: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  calendar: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  phone: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.13 4.1 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.7c.13.96.37 1.9.72 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.35 1.84.6 2.8.72A2 2 0 0 1 22 16.9z"/></svg>`,
+  home: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 4l9 8"/><path d="M5 10v10h14V10"/></svg>`,
+  search: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  chat: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  shop: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2l3 6h6l3-6"/><path d="M3 8h18l-2 12H5z"/></svg>`,
+  bell: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
+  tool: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>`,
+  food: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11h18a9 9 0 0 1-18 0z"/><line x1="6" y1="4" x2="6" y2="8"/><line x1="10" y1="3" x2="10" y2="8"/><line x1="14" y1="4" x2="14" y2="8"/></svg>`,
+  material: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/></svg>`,
+  pencil: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7h-3v-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.6 7.6"/></svg>`,
+  shirt: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.4 7.2L16 3l-4 2-4-2L3.6 7.2a2 2 0 0 0-.6 2.1L5 14v7h14v-7l2-4.7a2 2 0 0 0-.6-2.1z"/></svg>`,
+  laptop: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+  palette: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c3 0 2-2 2-4 0-1 1-2 2-2h2a4 4 0 0 0 4-4 10 10 0 0 0-10-10z"/></svg>`,
+  eye: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  eyeOff: `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10 10 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
+};
+
+// ═════════════════════════════════════════════════════════════════
+// Fotos de ejemplo (gradiente + emoji, sin SVG)
+// ═════════════════════════════════════════════════════════════════
+const cookieImg1 = { bg: 'radial-gradient(circle at 35% 35%, #e0b97e, #5a3a1e)', emoji: '🍪' };
+const cookieImg2 = { bg: 'radial-gradient(circle at 60% 40%, #caa06a, #4a2d14)', emoji: '🍪' };
+
+// ═════════════════════════════════════════════════════════════════
+// Datos del tutorial
+// ═════════════════════════════════════════════════════════════════
+
+// Pantalla Inicio (feed con botón Subir)
+const screenInicio = () => `
+  <div class="app-header">
+    <div class="h-left">
+      <span class="welcome">Bienvenido</span>
+      <span class="name">Iván <span class="name-dot">${ico.chev}</span></span>
+    </div>
+    <button class="btn-pill" id="btn-subir-doc">${ico.plus}<span>Subir</span></button>
+  </div>
+  <div class="feed-card">
+    <div class="feed-card-head">
+      <span class="badge-mini">Laboratorio</span>
+      <span style="font-size:12px; color:var(--text-sec); font-weight:600;">Iván</span>
+    </div>
+    <div class="feed-card-body">
+      <div class="feed-card-img" style="background:linear-gradient(135deg,#2a2a40,#555); margin-bottom:10px;"></div>
+      <div class="title">Informe construcción de transformador</div>
+      <div class="sub">Para el transformador de máquinas</div>
+      <div class="feed-card-tags">
+        <span class="tag">2025-2</span><span class="tag">Ingeniería Electrónica</span><span class="tag">Maquinas Eléctricas</span>
+      </div>
+      <div class="feed-card-meta">
+        <span style="color:var(--success); font-weight:600;">▲ 2</span>
+        <span class="feed-meta-actions"><span>💬 0</span><span>🚩 0</span></span>
+      </div>
+    </div>
+  </div>
+  <div class="feed-card">
+    <div class="feed-card-head">
+      <span class="badge-mini">Laboratorio</span>
+      <span style="font-size:12px; color:var(--text-sec); font-weight:600;">Iván</span>
+    </div>
+    <div class="feed-card-body">
+      <div class="feed-card-img" style="background:linear-gradient(135deg,#40306a,#9b7acc);"></div>
+    </div>
+  </div>
+  ${tabbar('inicio')}
+`;
+
+// Pantalla Tienda (feed con botón Publicar)
+const screenTienda = () => `
+  <div class="app-header">
+    <div class="h-left">
+      <span class="welcome" style="font-size:22px; font-weight:800; color:var(--text);">Tienda</span>
+    </div>
+    <button class="btn-pill" id="btn-subir-prod">${ico.plus}<span>Publicar</span></button>
+  </div>
+  <div style="padding: 0 14px 12px; display:flex; gap:8px; overflow:hidden;">
+    <span class="daychip on" style="padding:6px 12px;">Todos</span>
+    <span class="daychip" style="padding:6px 12px;">${ico.food} Comida y bebidas</span>
+    <span class="daychip" style="padding:6px 12px;">${ico.material} Material académ...</span>
+  </div>
+  <div class="prod-card">
+    <div class="prod-card-info">
+      <div style="display:flex; gap:6px; margin-bottom:4px;">
+        <span class="badge-mini">Mat. académico</span>
+        <span class="badge-mini green">Disponible</span>
+      </div>
+      <div class="prod-card-title">Selector de 3 posiciones</div>
+      <div class="prod-card-sub">Selector de muletilla metálico, vendo los 2</div>
+      <div class="prod-card-price">$ 18.000</div>
+      <div style="font-size:10px; color:var(--primary-light); font-weight:600; margin-top:4px;">${ico.profile} Iván · Ingeniería Electrónica</div>
+    </div>
+    <div class="prod-card-img" style="background:linear-gradient(135deg,#4a3a2c,#8a6b4e);"></div>
+  </div>
+  <div class="prod-card">
+    <div class="prod-card-info">
+      <div style="display:flex; gap:6px; margin-bottom:4px;">
+        <span class="badge-mini">Mat. académico</span>
+        <span class="badge-mini green">Disponible</span>
+      </div>
+      <div class="prod-card-title">Patrones Biología I + apuntes 2do corte</div>
+      <div class="prod-card-sub">Contiene los apuntes del único y ultimo mejor monitor que hubo...</div>
+      <div class="prod-card-price">$ 50.000</div>
+      <div style="font-size:10px; color:var(--primary-light); font-weight:600; margin-top:4px;">${ico.eyeOff} Anónimo</div>
+    </div>
+    <div class="prod-card-img" style="background:linear-gradient(135deg,#d9d9d9,#aaa);"></div>
+  </div>
+  ${tabbar('tienda')}
+`;
+
+// Tab bar
+function tabbar(active) {
+  const items = [
+    { k: 'inicio', l: 'Inicio', i: ico.home },
+    { k: 'buscar', l: 'Buscar', i: ico.search },
+    { k: 'operativos', l: 'Operativos', i: ico.tool },
+    { k: 'chat', l: 'Chat', i: ico.chat },
+    { k: 'tienda', l: 'Tienda', i: ico.shop },
+    { k: 'notif', l: 'Notif.', i: ico.bell },
+  ];
+  return `<div class="tabbar">${items.map(it => `
+    <div class="tab-item ${it.k === active ? 'active' : ''}">
+      <div class="tab-pill">${it.i}</div>
+      <span>${it.l}</span>
+    </div>`).join('')}</div>`;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// Tutoriales
+// ═════════════════════════════════════════════════════════════════
+
+// Helper: construir formulario subir documento con estado variable
+function formSubirDoc(state = {}) {
+  const s = { tituloFocus: false, descFocus: false, tipoFocus: false, profFocus: false,
+              profSearch: '', profSugg: false, materiaFocus: false, materiaSearch: '', materiaSugg: false,
+              titulo: '', desc: '', tipo: '', tipoOpen: false,
+              profs: [], materias: [], anonimo: false,
+              fileState: 'empty', // empty | modal | done
+              ...state };
+  return `
+    <div class="app-header-sub">
+      <div class="back">${ico.back}</div>
+      <div class="title">Subir documento</div>
+    </div>
+    <div class="form">
+      <div>
+        <label class="form-label">Título <span class="req">*</span></label>
+        <div class="input ${s.tituloFocus ? 'focused' : ''}" data-hit="titulo">
+          ${s.titulo ? `<span class="value">${s.titulo}</span>` : `<span class="placeholder">Título del documento</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Descripción</label>
+        <div class="input textarea ${s.descFocus ? 'focused' : ''}" data-hit="desc">
+          ${s.desc ? `<span class="value">${s.desc}</span>` : `<span class="placeholder">Descripción opcional</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Tipo de documento <span class="req">*</span></label>
+        <div class="input" data-hit="tipo">
+          ${s.tipo ? `<span class="value">${s.tipo}</span>` : `<span class="placeholder">Selecciona el tipo...</span>`}
+          <span class="chev">${ico.chev}</span>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Profesor(es)</label>
+        ${s.profs.length ? `<div class="chips">${s.profs.map(p => `<span class="chip">${p} <span style="opacity:.6">×</span></span>`).join('')}</div>` : ''}
+        ${s.profSugg ? `<div class="suggest suggest--above">
+          <div class="suggest-item">Juanito Pérez Ramírez</div>
+          <div class="suggest-item highlight">Juanito Tales López</div>
+          <div class="suggest-item">Juana Fulana Díaz</div>
+          <div class="suggest-item">Juancho Zutano Ruiz</div>
+        </div>` : ''}
+        <div class="input ${s.profFocus ? 'focused' : ''}" data-hit="prof">
+          <span class="input-icon">${ico.profile}</span>
+          ${s.profSearch ? `<span class="value">${s.profSearch}</span>` : `<span class="placeholder">${s.profs.length ? 'Agregar otro profesor...' : 'Busca o agrega un profesor...'}</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Carrera(s) <span class="req">*</span> <span class="count">(1/4)</span></label>
+        <div class="chips"><span class="chip">Ingeniería Electrónica <span style="opacity:.6">×</span></span></div>
+        <div class="input focused">
+          <span class="input-icon">${ico.book}</span>
+          <span class="value">Ingeniería Electrónica</span>
+          <span class="chev">×</span>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Materia <span class="req">*</span>${s.materias.length ? ` <span class="count">(${s.materias.length}/4)</span>` : ''}</label>
+        ${s.materias.length ? `<div class="chips">${s.materias.map(m => `<span class="chip">${m} <span style="opacity:.6">×</span></span>`).join('')}</div>` : ''}
+        ${s.materiaSugg ? `<div class="suggest suggest--above">
+          <div class="suggest-item highlight">Cálculo Diferencial</div>
+          <div class="suggest-item">Cálculo Integral</div>
+          <div class="suggest-item">Cálculo Vectorial</div>
+          <div class="suggest-item">Cálculo Numérico</div>
+        </div>` : ''}
+        <div class="input ${s.materiaFocus ? 'focused' : ''}" data-hit="materia">
+          <span class="input-icon">${ico.book}</span>
+          ${s.materiaSearch ? `<span class="value">${s.materiaSearch}</span>` : `<span class="placeholder">${s.materias.length ? 'Busca otra materia...' : 'Busca una materia...'}</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Universidad</label>
+        <div class="input"><span class="value">Universidad del Magdalena</span></div>
+      </div>
+      <div class="input-row">
+        <div>
+          <label class="form-label">Año</label>
+          <div class="input"><span class="value">2026</span></div>
+        </div>
+        <div>
+          <label class="form-label">Semestre</label>
+          <div class="input"><span class="value">Semestre 1</span><span class="chev">${ico.chev}</span></div>
+        </div>
+      </div>
+      ${s.fileState === 'done' ? `
+        <div class="dropzone filled" data-hit="drop">
+          <div class="dropzone-icon">${ico.checkOk}</div>
+          <div class="dropzone-text">laboratorio uno last.pdf</div>
+          <div class="dropzone-hint">2.1 MB · application/pdf</div>
+        </div>
+        <div class="file-card">
+          <div class="file-icon">PDF</div>
+          <div style="flex:1;">
+            <div class="file-name">laboratorio uno last.pdf</div>
+            <div class="file-hint">Toca para cambiar</div>
+          </div>
+        </div>
+      ` : `
+        <div class="dropzone" data-hit="drop">
+          <div class="dropzone-icon">${ico.cloud}</div>
+          <div class="dropzone-text">Toca para seleccionar archivo</div>
+          <div class="dropzone-hint">PDF, Word, PowerPoint, Excel, PNG, JPG</div>
+        </div>
+      `}
+      <div class="check-row ${s.anonimo ? 'on' : ''}" data-hit="anon">
+        <div class="check ${s.anonimo ? 'on' : ''}"></div>
+        <div class="check-body">
+          <div class="check-title">Publicar de forma anónima</div>
+          <div class="check-sub">Tu nombre no será visible para otros</div>
+        </div>
+        <span style="color:var(--text-muted)">${s.anonimo ? ico.eyeOff : ico.eye}</span>
+      </div>
+      <div class="warn">${ico.clock} Podrás eliminar esta publicación 2 horas después de subirla.</div>
+      <button class="submit" data-hit="submit">Subir documento</button>
+      <button class="submit ghost">Cancelar</button>
+    </div>
+  `;
+}
+
+// Helper: construir formulario subir producto
+function formSubirProd(state = {}) {
+  const s = {
+    nombreFocus: false, descFocus: false, precioFocus: false, catFocus: false,
+    nombre: '', desc: '', precio: '', cat: '',
+    catOpen: false,
+    dispMode: 'corrido', // 'corrido' | 'horario'
+    restringir: false, diasSel: [], diasU: [],
+    mostrarHorarioClases: false, claseExpandida: null, bloques: {},
+    horarioGuardado: false,
+    whatsapp: '',
+    fotos: [],
+    fotoPickerOpen: false, fotoPickerSelected: 0,
+    ...state
+  };
+  const cats = [
+    { k: 'comida', l: 'Comida y bebidas', i: ico.food },
+    { k: 'material', l: 'Material académico', i: ico.material },
+    { k: 'utiles', l: 'Útiles y papelería', i: ico.pencil },
+    { k: 'ropa', l: 'Ropa y accesorios', i: ico.shirt },
+    { k: 'tec', l: 'Tecnología', i: ico.laptop },
+    { k: 'arte', l: 'Arte y diseño', i: ico.palette },
+    { k: 'servicios', l: 'Servicios', i: ico.tool },
+  ];
+  return `
+    <div class="app-header-sub">
+      <div class="back">${ico.back}</div>
+      <div class="title">Publicar producto</div>
+    </div>
+    <div class="form">
+      <div class="banner">
+        <span class="ico">${ico.profile}</span>
+        <span>Los productos se publican siempre con tu nombre real. La tienda no permite publicaciones anónimas.</span>
+      </div>
+      <div>
+        <label class="form-label">Nombre del producto <span class="req">*</span></label>
+        <div class="input ${s.nombreFocus ? 'focused' : ''}">
+          ${s.nombre ? `<span class="value">${s.nombre}</span>` : `<span class="placeholder">¿Qué estás vendiendo?</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Descripción</label>
+        <div class="input textarea ${s.descFocus ? 'focused' : ''}">
+          ${s.desc ? `<span class="value">${s.desc}</span>` : `<span class="placeholder">Describe el producto, estado, características...</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Precio (COP) <span class="req">*</span></label>
+        <div class="input ${s.precioFocus ? 'focused' : ''}">
+          ${s.precio ? `<span class="value">$ ${s.precio}</span>` : `<span class="placeholder">Ej: 15000</span>`}
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Categoría <span class="req">*</span></label>
+        <div class="input" data-hit="cat">
+          ${s.cat ? `<span class="value">${s.cat}</span>` : `<span class="placeholder">Selecciona una categoría...</span>`}
+          <span class="chev">${ico.chev}</span>
+        </div>
+        ${s.catOpen ? `<div class="sheet" style="position:relative; left:0; right:0; margin-top:8px;">
+          <div class="sheet-title">Categoría *</div>
+          ${cats.map(c => `<div class="sheet-item ${s.cat === c.l ? 'selected' : ''}"><span class="sheet-ico">${c.i}</span>${c.l}</div>`).join('')}
+        </div>` : ''}
+      </div>
+      <div>
+        <label class="form-label">Programa académico relacionado</label>
+        <div class="input focused"><span class="input-icon">${ico.book}</span><span class="value">Ingeniería Electrónica</span><span class="chev">×</span></div>
+      </div>
+      <div>
+        <label class="form-label">Disponibilidad para vender</label>
+        <div class="toggle-seg">
+          <div class="toggle-opt ${s.dispMode === 'corrido' ? 'on' : ''}" data-hit="disp-corrido">${ico.clock} Horario corrido</div>
+          <div class="toggle-opt ${s.dispMode === 'horario' ? 'on' : ''}" data-hit="disp-horario">${ico.school} Por mi horario</div>
+        </div>
+      </div>
+      ${s.dispMode === 'corrido' ? `
+        <div class="check-row ${s.restringir ? 'on' : ''}" data-hit="restr">
+          <div class="check ${s.restringir ? 'on' : ''}"></div>
+          <div class="check-body"><div class="check-title">Restringir horario de venta</div></div>
+          <span style="color:var(--text-muted)">${ico.clock}</span>
+        </div>
+        ${s.restringir ? timePicker('ABRE', 'CIERRA', '8:00 AM', '6:00 PM') : ''}
+        <div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Días disponibles · sin selección = todos los días</div>
+          <div class="daychips">
+            ${['Lun','Mar','Mié','Jue','Vie','Sáb'].map(d => `<span class="daychip ${s.diasSel.includes(d) ? 'on' : ''}">${d}</span>`).join('')}
+          </div>
+          ${s.diasSel.length ? `<div style="font-size:12px; color:var(--primary-light); margin-top:6px; font-weight:600;">Limpiar selección</div>` : ''}
+        </div>
+      ` : `
+        ${timePicker('DESDE', 'HASTA', '8:00 AM', '6:00 PM', true)}
+        <div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">¿Qué días vas a la U?</div>
+          <div class="daychips">
+            ${['Lun','Mar','Mié','Jue','Vie','Sáb'].map(d => {
+              const on = s.diasU.includes(d);
+              return `<span class="daychip ${on ? 'on' : 'off'}">${d}</span>`;
+            }).join('')}
+          </div>
+        </div>
+        ${s.diasU.length ? renderHorarioClases(s) : ''}
+      `}
+      <div>
+        <label class="form-label">Número de WhatsApp <span class="req">*</span></label>
+        <div class="input"><span class="value">${s.whatsapp || '3236656639'}</span></div>
+      </div>
+      <div>
+        <label class="form-label">Fotos del producto <span class="count">${s.fotos.length}/7</span></label>
+        ${s.fotos.length === 0 ? `
+          <div class="dropzone" data-hit="fotos">
+            <div class="dropzone-icon" style="color:var(--primary);">${ico.camera}</div>
+            <div class="dropzone-text">Toca para agregar fotos</div>
+            <div class="dropzone-hint">Hasta 7 fotos · PNG, JPG, WEBP</div>
+          </div>
+        ` : `
+          <div class="photo-grid">
+            ${s.fotos.map((foto, i) => `
+              <div class="photo-slot has-img" style="background:${foto.bg}; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:38px; line-height:1;">${foto.emoji}</span>
+                ${i === 0 ? `<span class="pri-badge">Principal</span>` : ''}
+                <span class="x-badge">×</span>
+              </div>
+            `).join('')}
+            <div class="photo-slot" data-hit="addfoto">+</div>
+          </div>
+        `}
+      </div>
+      <div class="warn">${ico.clock} Podrás eliminar este producto 40 minutos después de publicarlo.</div>
+      <button class="submit" data-hit="submit-prod">Publicar en la tienda</button>
+      <button class="submit ghost">Cancelar</button>
+    </div>
+  `;
+}
+
+function timePicker(lbl1, lbl2, v1, v2, titled = false) {
+  return `
+    ${titled ? `<div style="font-size:12px; color:var(--text-muted); text-align:center; margin:-4px 0;">¿De qué hora a qué hora puedes vender?</div>` : ''}
+    <div class="timepicker">
+      <div class="tp-col">
+        <div class="tp-col-title">${lbl1}</div>
+        <div class="tp-chev">▲</div>
+        <div class="tp-faded">7:30 AM</div>
+        <div class="tp-current">${v1}</div>
+        <div class="tp-faded">8:30 AM</div>
+        <div class="tp-chev">▼</div>
+      </div>
+      <div class="tp-col">
+        <div class="tp-col-title">${lbl2}</div>
+        <div class="tp-chev">▲</div>
+        <div class="tp-faded">5:30 PM</div>
+        <div class="tp-current">${v2}</div>
+        <div class="tp-faded">6:30 PM</div>
+        <div class="tp-chev">▼</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHorarioClases(s) {
+  const diasActivos = s.diasU;
+  return `
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <div style="font-size:13px; font-weight:600; color:var(--text-sec);">Horario de clases</div>
+        ${s.horarioGuardado ? `<span style="font-size:12px; color:var(--primary-light); font-weight:600; background:var(--primary-faded); padding:4px 10px; border-radius:999px;">✎ Editar</span>` : `<span style="font-size:12px; color:var(--warning); font-weight:600;">× Cancelar</span>`}
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">Marca cuándo tienes clase · los compradores verán tus horas libres</div>
+      ${s.horarioGuardado ? `
+        <div style="background:var(--surface); border:1px solid var(--primary); border-radius:14px; padding:12px;">
+          <div style="display:flex; align-items:center; gap:6px; color:var(--primary-light); font-size:13px; font-weight:600; margin-bottom:6px;">✓ Horario guardado desde tu perfil</div>
+          <div style="font-size:13px; color:var(--text-sec); line-height:1.8;">
+            <b>Lun</b> &nbsp;9:00 AM &nbsp;→ 10:00 AM<br>
+            <b>Mié</b> &nbsp;8:00 AM &nbsp;→ 10:00 AM
+          </div>
+        </div>
+      ` : diasActivos.map(d => {
+        const bloques = s.bloques[d] || [];
+        const expandido = s.claseExpandida === d;
+        return `
+        <div class="class-row ${bloques.length === 0 && !expandido ? 'empty' : ''}" style="${expandido ? 'flex-direction:column; align-items:stretch;' : ''}">
+          ${!expandido ? `
+            <div class="day-badge">${d}</div>
+            <div class="class-row-main">
+              ${bloques.length ? `${bloques.length} bloque${bloques.length === 1 ? '' : 's'} de clase` : 'Sin clases — disponible todo el día'}
+            </div>
+            <span class="tp-chev">${ico.chev}</span>
+          ` : `
+            <div style="display:flex; align-items:center; gap:10px; width:100%;">
+              <div class="day-badge">${d}</div>
+              <div style="flex:1; font-size:13px;">1 bloque de clase</div>
+              <span class="tp-chev">▲</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-top:10px;">¿A qué hora es la clase?</div>
+            ${timePicker('ENTRA', 'SALE', '8:00 AM', '10:00 AM')}
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button class="submit ghost" style="margin:0; padding:10px; border:1px solid var(--border); border-radius:12px; flex:1;">Cancelar</button>
+              <button class="submit" style="margin:0; padding:10px; flex:1;">Agregar</button>
+            </div>
+          `}
+        </div>
+        ${bloques.length && !expandido ? `<div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:10px 12px; margin-bottom:8px; display:flex; align-items:center; gap:10px; font-size:13px;">
+          <span style="color:var(--primary-light);">◉</span>
+          <span>${bloques[0].entra} → ${bloques[0].sale}</span>
+          <span style="margin-left:auto; color:var(--error);">×</span>
+        </div>` : ''}
+      `;
+      }).join('') + `<div style="margin-top:-4px;"><div style="font-size:13px; color:var(--primary-light); text-align:center; padding:10px; background:var(--primary-faded); border-radius:10px;">+ Agregar bloque de clase</div></div>`}
+    </div>
+  `;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// TUTORIAL DOCUMENTO
+// ═════════════════════════════════════════════════════════════════
+const baseDoc = { titulo: 'Taller Cálculo Diferencial', desc: 'Ejercicios de derivadas resueltos', tipo: 'Taller' };
+
+const STEPS_DOC = [
+  {
+    intro: true,
+    title: 'Cómo subir un documento',
+    sub: 'Comparte parciales, apuntes, talleres y laboratorios con tu universidad',
+    dur: 3200,
+  },
+  {
+    screenType: 'inicio',
+    render: screenInicio,
+    subtitle: 'Abre Mach-T en <b>Inicio</b>. Arriba a la derecha está el botón <b>+ Subir</b>.',
+    finger: '.btn-pill',
+    zoom: { target: '.btn-pill', scale: 1.3 },
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({}),
+    subtitle: 'Este es el formulario. Vamos paso a paso.',
+    subPos: 'mid-bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, tipo: '', descFocus: true }),
+    subtitle: 'Escribe un <b>título claro</b> y una descripción opcional para ayudar a otros a encontrarlo.',
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc }),
+    subtitle: 'Elige el <b>tipo</b>: Parcial, Laboratorio, Taller, Apuntes u Otro.',
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profFocus: true, profSearch: 'Jua', profSugg: true }),
+    subtitle: '<b>Etiqueta profesores</b> (opcional). Escribe el nombre y toca la sugerencia.',
+    subPos: 'top',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'] }),
+    subtitle: 'Tu <b>carrera</b> se llena sola desde tu perfil, pero puedes quitarla o agregar otras (hasta 4).',
+    scrollTo: 480,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materiaFocus: true, materiaSearch: 'Cál', materiaSugg: true }),
+    subtitle: 'Busca la <b>materia</b> y toca la sugerencia. Puedes agregar hasta 4.',
+    scrollTo: 480,
+    subPos: 'top',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'] }),
+    subtitle: 'El <b>año y semestre</b> se llenan solos, pero también los puedes cambiar.',
+    scrollTo: 540,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'] }),
+    subtitle: 'Ahora toca la zona morada para <b>subir tu archivo</b>.',
+    finger: '[data-hit="drop"]',
+    scrollTo: 680,
+    subPos: 'top',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'] }),
+    overlay: `
+      <div class="modal-backdrop">
+        <div class="modal-sel">
+          <div class="modal-sel-title">Seleccionar archivo</div>
+          <div class="modal-sel-list">
+            <div class="modal-sel-btn">Cancelar</div>
+            <div class="modal-sel-btn">Administrador de archivos</div>
+            <div class="modal-sel-btn">Galería de fotos</div>
+          </div>
+        </div>
+      </div>
+    `,
+    subtitle: '<b>Administrador de archivos</b> para PDFs, Word, PowerPoint o Excel. <b>Galería</b> para imágenes.',
+    subPos: 'mid-top',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'], fileState: 'done' }),
+    subtitle: '¡Listo! Archivo adjunto. Tócalo de nuevo si quieres cambiarlo.',
+    scrollTo: 680,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'], fileState: 'done', anonimo: false }),
+    subtitle: '¿No quieres que se vea tu nombre? Activa <b>Publicar de forma anónima</b>.',
+    finger: '[data-hit="anon"]',
+    scrollTo: 1000,
+    subPos: 'top',
+  },
+  {
+    screenType: 'doc-form',
+    render: () => formSubirDoc({ ...baseDoc, profs: ['Juanito Tales López'], materias: ['Cálculo Diferencial'], fileState: 'done', anonimo: true }),
+    subtitle: 'Tendrás <b>2 horas</b> para eliminar la publicación si te arrepientes. Toca <b>Subir documento</b>.',
+    finger: '[data-hit="submit"]',
+    scrollTo: 1150,
+    subPos: 'top',
+  },
+  {
+    outro: true,
+    title: '¡Tu documento está publicado!',
+    sub: 'Aparecerá en el feed de tu universidad.',
+  },
+];
+
+// ═════════════════════════════════════════════════════════════════
+// TUTORIAL PRODUCTO
+// ═════════════════════════════════════════════════════════════════
+const baseProd = { nombre: 'Galletas de chocolate', desc: 'Galletas Horneadas caseras', precio: '3000' };
+
+const STEPS_PROD = [
+  {
+    intro: true,
+    title: 'Cómo publicar un producto',
+    sub: 'Vende comida, apuntes, ropa o servicios a tus compañeros',
+    dur: 3200,
+  },
+  {
+    screenType: 'tienda',
+    render: screenTienda,
+    subtitle: 'Entra a <b>Tienda</b> y toca <b>+ Publicar</b>.',
+    finger: '.btn-pill',
+    zoom: { target: '.btn-pill', scale: 1.3 },
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({}),
+    subtitle: 'La tienda siempre usa tu <b>nombre real</b> — aquí no hay publicaciones anónimas.',
+    subPos: 'mid-bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd }),
+    subtitle: 'Escribe el <b>nombre</b>, descripción y <b>precio</b> en pesos.',
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, catOpen: true }),
+    subtitle: 'Elige una <b>categoría</b>: Comida, Material académico, Útiles, Ropa, Tecnología, Arte o Servicios.',
+    scrollTo: 360,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas' }),
+    subtitle: 'Tu <b>carrera</b> se prellena desde tu perfil, pero la puedes cambiar.',
+    scrollTo: 460,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas' }),
+    subtitle: '<b>Horario corrido</b> — tu producto está disponible siempre, todos los días.',
+    scrollTo: 540,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', restringir: true }),
+    subtitle: '¿Solo vendes en horas específicas? Activa <b>Restringir horario</b> y elige <b>abre / cierra</b>.',
+    finger: '[data-hit="restr"]',
+    scrollTo: 620,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', restringir: true, diasSel: ['Lun', 'Mar'] }),
+    subtitle: 'O elige <b>días específicos</b>. Sin selección = todos los días.',
+    scrollTo: 820,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario' }),
+    subtitle: 'O activa <b>Por mi horario</b> — solo apareces disponible los días que vas a la U.',
+    finger: '[data-hit="disp-horario"]',
+    scrollTo: 540,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'] }),
+    subtitle: 'Marca <b>qué días vas a la U</b>. Los otros días tu producto no aparece.',
+    scrollTo: 720,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], claseExpandida: 'Mié' }),
+    subtitle: '<b>Marca cuándo tienes clase</b> — los compradores solo verán tus horas libres.',
+    scrollTo: 900,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], horarioGuardado: true }),
+    subtitle: 'Si ya guardaste tu horario en tu perfil, se carga solo. Puedes <b>editarlo</b> aquí si algo cambia.',
+    scrollTo: 900,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], horarioGuardado: true }),
+    subtitle: 'Tu <b>WhatsApp</b> se autollena si ya lo tienes guardado. Puedes cambiarlo aquí.',
+    scrollTo: 1180,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], horarioGuardado: true, fotos: [cookieImg1] }),
+    subtitle: 'Sube hasta <b>7 fotos</b> del producto.',
+    scrollTo: 1280,
+    subPos: 'top',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], horarioGuardado: true, fotos: [cookieImg1, cookieImg2] }),
+    subtitle: 'La <b>primera foto</b> queda como <i>Principal</i> — la que verán en el feed.',
+    scrollTo: 1280,
+    subPos: 'bottom',
+  },
+  {
+    screenType: 'prod-form',
+    render: () => formSubirProd({ ...baseProd, cat: 'Comida y bebidas', dispMode: 'horario', diasU: ['Lun', 'Mié'], horarioGuardado: true, fotos: [cookieImg1, cookieImg2] }),
+    subtitle: 'Revisa todo y toca <b>Publicar en la tienda</b>. Tienes <b>40 min</b> para eliminarlo después.',
+    finger: '[data-hit="submit-prod"]',
+    scrollTo: 1500,
+    subPos: 'top',
+  },
+  {
+    outro: true,
+    title: '¡Tu producto está en la tienda!',
+    sub: 'Los estudiantes de tu universidad ya pueden verlo y contactarte.',
+  },
+];
+
+// ═════════════════════════════════════════════════════════════════
+// Runner
+// ═════════════════════════════════════════════════════════════════
+let currentSteps = null;
+let currentTutorial = null; // 'doc' | 'prod'
+let stepIdx = 0;
+let timer = null;
+let tapTimer = null;
+let subTimer = null;
+let fingerTimer = null;
+let lastScreenType = null;
+let lastSubtitle = '';
+let lastSubPos = '';
+let currentScale = 1, currentTx = 0, currentTy = 0;
+
+// Duración basada en cantidad de texto: 1.6s base + 55ms por carácter
+function computeDuration(text) {
+  const plain = (text || '').replace(/<[^>]+>/g, '').trim();
+  return Math.max(3200, Math.min(10000, 1600 + plain.length * 55));
+}
+
+function startTutorial(which) {
+  currentTutorial = which;
+  currentSteps = which === 'doc' ? STEPS_DOC : STEPS_PROD;
+  stepIdx = 0;
+  lastScreenType = null;
+  lastSubtitle = '';
+  lastSubPos = '';
+  currentScale = 1; currentTx = 0; currentTy = 0;
+  document.getElementById('selector').classList.add('hide');
+  document.getElementById('stage').classList.add('active');
+  document.getElementById('outro').style.display = 'none';
+  resetZoom(false);
+  runStep();
+}
+
+function runStep() {
+  clearTimeout(timer);
+  clearTimeout(tapTimer);
+  clearTimeout(fingerTimer);
+  clearTimeout(subTimer);
+  if (stepIdx >= currentSteps.length) {
+    showOutro();
+    return;
+  }
+  const step = currentSteps[stepIdx];
+
+  if (step.intro) {
+    showIntro(step);
+    timer = setTimeout(() => { stepIdx++; hideIntro(); runStep(); }, step.dur);
+    return;
+  }
+
+  if (step.outro) {
+    showOutro();
+    return;
+  }
+
+  const screens = document.getElementById('screens');
+  const screen = document.getElementById('persistent-screen');
+
+  // Renderizar HTML (reutiliza el mismo contenedor)
+  const isNewScreen = step.screenType !== lastScreenType;
+  if (isNewScreen) {
+    // Reset zoom instantáneo al cambiar de pantalla
+    resetZoom(false);
+  }
+  screen.innerHTML = step.render();
+  // Eliminar overlay previo
+  const prevOverlay = screens.querySelector('.step-overlay');
+  if (prevOverlay) prevOverlay.remove();
+  if (step.overlay) {
+    const overlayDiv = document.createElement('div');
+    overlayDiv.className = 'step-overlay';
+    overlayDiv.innerHTML = step.overlay;
+    screens.appendChild(overlayDiv);
+  }
+  lastScreenType = step.screenType;
+
+  // Scroll al punto deseado
+  const targetScroll = step.scrollTo || 0;
+  screen.scrollTo({ top: targetScroll, behavior: isNewScreen ? 'auto' : 'smooth' });
+
+  // Calcular duración del paso por longitud de texto
+  const dur = step.dur || computeDuration(step.subtitle);
+
+  // Esperar a que el scroll termine antes de aplicar el zoom
+  const zoomDelay = isNewScreen ? 50 : 600;
+  setTimeout(() => applyZoom(step.zoom), zoomDelay);
+
+  // Subtítulo con fade (posición dinámica)
+  updateSubtitle(step.subtitle || '', step.subPos || 'bottom');
+
+  // Dedo aparece tras zoom estable; tap ocurre cerca del final del paso
+  const fingerSettle = zoomDelay + 900;
+  const tapAt = step.tapAt != null ? step.tapAt : (dur - 1100);
+  updateFinger(step, fingerSettle, tapAt);
+
+  // Avanzar al siguiente paso
+  timer = setTimeout(() => {
+    stepIdx++;
+    runStep();
+  }, dur);
+}
+
+function updateSubtitle(text, pos) {
+  const sub = document.getElementById('subtitle');
+  const posCls = 'subtitle--' + (pos || 'bottom');
+  if (lastSubtitle === text && lastSubPos === posCls) return;
+  lastSubtitle = text;
+  lastSubPos = posCls;
+  sub.classList.add('leaving');
+  subTimer = setTimeout(() => {
+    sub.innerHTML = text;
+    sub.classList.remove('subtitle--top', 'subtitle--mid-top', 'subtitle--mid-bottom', 'subtitle--bottom');
+    sub.classList.add(posCls);
+    sub.classList.remove('leaving');
+    sub.classList.add('entering');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => sub.classList.remove('entering'));
+    });
+  }, 250);
+}
+
+function updateFinger(step, settle, tapAt) {
+  const finger = document.getElementById('finger');
+  if (!step.finger) {
+    finger.classList.remove('visible');
+    return;
+  }
+  fingerTimer = setTimeout(() => {
+    const target = document.querySelector(step.finger);
+    if (!target) { finger.classList.remove('visible'); return; }
+    const rect = target.getBoundingClientRect();
+    const appRect = document.getElementById('app').getBoundingClientRect();
+    const x = rect.left + rect.width / 2 - appRect.left;
+    const y = rect.top + rect.height / 2 - appRect.top;
+    finger.style.left = x + 'px';
+    finger.style.top = y + 'px';
+    finger.classList.add('visible');
+    if (tapAt != null) {
+      const tapDelay = Math.max(200, tapAt - settle);
+      tapTimer = setTimeout(() => {
+        finger.classList.add('tap');
+        spawnRipple(x, y);
+        if (target.classList.contains('check-row')) {
+          target.classList.add('on');
+          const check = target.querySelector('.check');
+          if (check) check.classList.add('on');
+        }
+        setTimeout(() => finger.classList.remove('tap'), 500);
+      }, tapDelay);
+    }
+  }, settle);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// Zoom — usa translate + scale para que la animación sea fluida
+// y el elemento enfocado se quede en su posición visible.
+// ═════════════════════════════════════════════════════════════════
+function applyZoom(zoom) {
+  const screens = document.getElementById('screens');
+  if (!zoom || !zoom.target) { resetZoom(true); return; }
+  const target = screens.querySelector(zoom.target);
+  if (!target) { resetZoom(true); return; }
+
+  // Posición visible actual del target
+  const scrRect = screens.getBoundingClientRect();
+  const tgtRect = target.getBoundingClientRect();
+  const visLeft = tgtRect.left - scrRect.left;
+  const visCx = visLeft + tgtRect.width / 2;
+  const visCy = tgtRect.top + tgtRect.height / 2 - scrRect.top;
+
+  // Coordenadas naturales (deshacer transform actual)
+  const natLeft = (visLeft - currentTx) / currentScale;
+  const natWidth = tgtRect.width / currentScale;
+  const natCx = (visCx - currentTx) / currentScale;
+  const natCy = (visCy - currentTy) / currentScale;
+
+  // Ancla vertical: mantener visible, apartado del subtítulo.
+  const subTop = scrRect.height - 160;
+  let anchorVisY = visCy;
+  if (visCy > subTop) {
+    anchorVisY = subTop - 40;
+  }
+
+  const newScale = zoom.scale;
+  let newTx = visCx - natCx * newScale;
+  const newTy = anchorVisY - natCy * newScale;
+
+  // Clamp horizontal: el target no debe salirse del viewport.
+  // Si al escalar se sale por la izquierda, pegarlo al lado izquierdo con padding.
+  // Si se sale por la derecha, pegarlo al lado derecho con padding.
+  const padding = 16;
+  const scaledLeft = natLeft * newScale + newTx;
+  const scaledRight = scaledLeft + natWidth * newScale;
+  if (scaledLeft < padding) {
+    newTx += padding - scaledLeft;
+  } else if (scaledRight > scrRect.width - padding) {
+    newTx -= scaledRight - (scrRect.width - padding);
+    // Si después del ajuste derecho se sale por la izquierda (target más ancho
+    // que el viewport), priorizar la izquierda.
+    const reLeft = natLeft * newScale + newTx;
+    if (reLeft < padding) newTx += padding - reLeft;
+  }
+
+  currentScale = newScale; currentTx = newTx; currentTy = newTy;
+  screens.style.transform = `translate(${newTx}px, ${newTy}px) scale(${newScale})`;
+}
+
+function resetZoom(animate) {
+  const screens = document.getElementById('screens');
+  if (!animate) {
+    const prevTransition = screens.style.transition;
+    screens.style.transition = 'none';
+    screens.style.transform = 'translate(0, 0) scale(1)';
+    currentScale = 1; currentTx = 0; currentTy = 0;
+    void screens.offsetHeight; // forzar reflow
+    screens.style.transition = prevTransition || '';
+  } else {
+    screens.style.transform = 'translate(0, 0) scale(1)';
+    currentScale = 1; currentTx = 0; currentTy = 0;
+  }
+}
+
+function spawnRipple(x, y) {
+  const r = document.createElement('div');
+  r.className = 'ripple';
+  r.style.left = x + 'px';
+  r.style.top = y + 'px';
+  document.getElementById('app').appendChild(r);
+  setTimeout(() => r.remove(), 800);
+}
+
+function showIntro(step) {
+  document.getElementById('intro-title').textContent = step.title;
+  document.getElementById('intro-sub').textContent = step.sub;
+  document.getElementById('intro').style.display = 'flex';
+  document.getElementById('subtitle').style.display = 'none';
+  document.getElementById('persistent-screen').innerHTML = '';
+  lastScreenType = null;
+  resetZoom(false);
+  document.getElementById('finger').classList.remove('visible');
+}
+
+function hideIntro() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('subtitle').style.display = 'block';
+}
+
+function showOutro() {
+  const step = currentSteps[currentSteps.length - 1];
+  document.getElementById('outro-title').textContent = step.title || '¡Listo!';
+  document.getElementById('outro-sub').textContent = step.sub || '';
+  document.getElementById('outro').style.display = 'flex';
+  document.getElementById('subtitle').style.display = 'none';
+  document.getElementById('finger').classList.remove('visible');
+  document.getElementById('intro').style.display = 'none';
+  resetZoom(true);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// Listeners
+// ═════════════════════════════════════════════════════════════════
+document.querySelectorAll('[data-start]').forEach(btn => {
+  btn.addEventListener('click', () => startTutorial(btn.dataset.start));
+});
+
+document.getElementById('outro-replay').addEventListener('click', () => {
+  document.getElementById('outro').style.display = 'none';
+  document.getElementById('subtitle').style.display = 'block';
+  stepIdx = 0;
+  runStep();
+});
+
+document.getElementById('outro-other').addEventListener('click', () => {
+  startTutorial(currentTutorial === 'doc' ? 'prod' : 'doc');
+});
+
+document.getElementById('outro-home').addEventListener('click', () => {
+  document.getElementById('stage').classList.remove('active');
+  document.getElementById('outro').style.display = 'none';
+  document.getElementById('subtitle').style.display = 'block';
+  document.getElementById('selector').classList.remove('hide');
+  clearTimeout(timer);
+  clearTimeout(tapTimer);
+});
+</script>
+</body>
+</html>
