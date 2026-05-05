@@ -758,10 +758,103 @@
             z-index: 9999;
             transition: width .1s linear;
         }
+        /* ── Easter egg: manifiesto ── */
+        .egg-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            opacity: 0; pointer-events: none;
+            transition: opacity .3s ease;
+            padding: 20px;
+        }
+        .egg-overlay.visible { opacity: 1; pointer-events: auto; }
+        .egg-card {
+            background: linear-gradient(160deg, #1A1027 0%, #0A0A0B 100%);
+            border: 1px solid rgba(167, 139, 250, 0.35);
+            border-radius: 22px;
+            padding: 32px 26px 26px;
+            max-width: 420px; width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(124, 58, 237, 0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
+            transform: scale(.92) translateY(8px);
+            transition: transform .35s cubic-bezier(.2,.9,.3,1.2);
+            position: relative;
+        }
+        .egg-overlay.visible .egg-card { transform: scale(1) translateY(0); }
+        .egg-spark {
+            font-size: 32px;
+            display: inline-block;
+            animation: eggBounce 1.6s ease-in-out infinite;
+        }
+        @keyframes eggBounce {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50%      { transform: translateY(-6px) rotate(8deg); }
+        }
+        .egg-title {
+            font-size: 22px; font-weight: 800; color: #fff;
+            margin: 10px 0 6px;
+            letter-spacing: -.3px;
+        }
+        .egg-sub {
+            font-size: 13.5px; color: rgba(255,255,255,.66);
+            line-height: 1.55; margin-bottom: 20px;
+        }
+        .egg-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
+            color: #fff; font-weight: 800; font-size: 15px;
+            padding: 13px 22px; border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(124,58,237,.45);
+            transition: transform .15s ease;
+            width: 100%;
+        }
+        .egg-btn:hover { transform: translateY(-1px); }
+        .egg-close {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.08);
+            color: rgba(255,255,255,.7);
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+        }
+        .egg-close:hover { color: #fff; background: rgba(255,255,255,.12); }
+        .egg-tag {
+            display: inline-block;
+            font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px;
+            padding: 5px 12px; border-radius: 999px;
+            background: rgba(167, 139, 250, 0.14);
+            color: #C4B5FD;
+            border: 1px solid rgba(167, 139, 250, 0.28);
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
 <div class="page-progress" id="pageProgress"></div>
+
+<!-- ══════════════════════════════════════════
+     EASTER EGG — Manifiesto
+════════════════════════════════════════════ -->
+<div class="egg-overlay" id="eggOverlay">
+    <div class="egg-card">
+        <button class="egg-close" id="eggClose" aria-label="Cerrar">✕</button>
+        <span class="egg-spark">✨</span>
+        <div style="margin-top:10px">
+            <span class="egg-tag">EASTER EGG</span>
+        </div>
+        <h3 class="egg-title">Encontraste el manifiesto</h3>
+        <p class="egg-sub">El documento detrás de Mach-T — por qué existe, para quién, y a dónde va.</p>
+        <a class="egg-btn" href="https://drive.google.com/uc?export=download&id=1VBO3Oic9ADlEl9YyG2YrvRIKOe9b960e" target="_blank" rel="noopener">
+            <span>📄</span><span>Descargar PDF</span>
+        </a>
+    </div>
+</div>
 
 <!-- ══════════════════════════════════════════
      HERO
@@ -775,7 +868,7 @@
     <div class="particles" id="particles"></div>
 
     <div class="hero-content">
-        <div class="logo-wrap">
+        <div class="logo-wrap" id="logoWrap" style="cursor:pointer">
             <div class="logo-halo"></div>
             <div class="logo-ring"></div>
             <img src="icon.png" alt="Mach-T">
@@ -1392,6 +1485,29 @@
         const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
         bar.style.width = pct + '%';
     }, { passive: true });
+
+    // ── Easter egg: 3 clicks en el logo → manifiesto ──
+    const logoEl = document.getElementById('logoWrap');
+    const eggOverlay = document.getElementById('eggOverlay');
+    const eggClose = document.getElementById('eggClose');
+    let eggClicks = 0;
+    let eggTimer = null;
+    if (logoEl) {
+        logoEl.addEventListener('click', () => {
+            eggClicks += 1;
+            if (eggTimer) clearTimeout(eggTimer);
+            eggTimer = setTimeout(() => { eggClicks = 0; }, 1500);
+            if (eggClicks >= 3) {
+                eggClicks = 0;
+                clearTimeout(eggTimer);
+                eggOverlay.classList.add('visible');
+            }
+        });
+    }
+    if (eggClose) eggClose.addEventListener('click', () => eggOverlay.classList.remove('visible'));
+    if (eggOverlay) eggOverlay.addEventListener('click', (e) => {
+        if (e.target === eggOverlay) eggOverlay.classList.remove('visible');
+    });
 </script>
 </body>
 </html>
