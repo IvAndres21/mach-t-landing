@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Mach-T — Material académico, tienda estudiantil y comunidad real para estudiantes de la Universidad del Magdalena">
     <meta property="og:title" content="Mach-T — La app de Unimag">
-    <meta property="og:description" content="Parciales, apuntes, tienda entre compañeros y más. Ya disponible en Play Store.">
+    <meta property="og:description" content="Parciales, apuntes, tienda entre compañeros y más. Ya disponible en App Store y Play Store.">
     <meta property="og:type" content="website">
     <title>Mach-T — La app de los estudiantes de Unimag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -273,6 +273,7 @@
             background: rgba(255,255,255,.05);
             border: 1px solid rgba(255,255,255,.1);
             color: var(--subtext);
+            text-decoration: none;
             padding: 15px 30px;
             border-radius: 16px;
             width: 100%;
@@ -280,7 +281,10 @@
             justify-content: center;
             font-size: 15px;
             font-weight: 600;
+            transition: transform .2s, border-color .2s, background .2s;
+            -webkit-tap-highlight-color: transparent;
         }
+        .btn-soon:hover { transform: scale(1.04); border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.08); }
         .soon-pill {
             background: rgba(245,158,11,.18);
             border: 1px solid rgba(245,158,11,.4);
@@ -633,12 +637,16 @@
             background: rgba(255,255,255,.05);
             border: 1px solid rgba(255,255,255,.1);
             color: var(--subtext);
+            text-decoration: none;
             padding: 18px 36px;
             border-radius: 18px;
             font-size: 16px; font-weight: 600;
             width: 100%; max-width: 310px;
             justify-content: center;
+            transition: transform .2s, border-color .2s, background .2s;
+            -webkit-tap-highlight-color: transparent;
         }
+        .btn-dl-soon:hover { transform: scale(1.04); border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.08); }
 
         /* ── FOOTER ── */
         footer {
@@ -901,13 +909,14 @@
                 </div>
             </a>
 
-            <div class="btn-soon">
-                <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
+            <a href="https://apps.apple.com/app/id6766287371"
+               target="_blank" rel="noopener" class="btn-soon">
+                <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="white"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="white"/></svg>
                 <div class="store-text">
-                    <span style="font-size:10px;opacity:.6">Próximamente en</span>
-                    <span style="font-size:16px;font-weight:700;color:#9CA3AF">App Store</span>
+                    <span style="font-size:10px;opacity:.6">Disponible en</span>
+                    <span style="font-size:16px;font-weight:700;color:#fff">App Store</span>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -1383,7 +1392,7 @@
     <p class="section-label reveal">Únete ahora</p>
     <h2 class="dl-title reveal" style="transition-delay:.1s">
         Ya está en<br>
-        <span class="dl-grad">Play Store</span>
+        <span class="dl-grad">App Store y Play Store</span>
     </h2>
     <p class="dl-sub reveal" style="transition-delay:.2s">
         Gratis. Para estudiantes de Unimag.<br>
@@ -1400,13 +1409,14 @@
             </div>
         </a>
 
-        <div class="btn-dl-soon">
-            <svg width="22" height="26" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="#9CA3AF"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="#9CA3AF"/></svg>
+        <a href="https://apps.apple.com/app/id6766287371"
+           target="_blank" rel="noopener" class="btn-dl-soon">
+            <svg width="22" height="26" viewBox="0 0 20 24" fill="none"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="white"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="white"/></svg>
             <div class="store-text">
-                <span style="font-size:11px;opacity:.6">Próximamente en</span>
-                <span style="font-size:17px;font-weight:700">App Store</span>
+                <span style="font-size:11px;opacity:.6">Disponible en</span>
+                <span style="font-size:17px;font-weight:700;color:#fff">App Store</span>
             </div>
-        </div>
+        </a>
     </div>
 </section>
 
