@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Política de privacidad de Mach-T — qué datos usamos, cómo los protegemos y cómo borrar tu cuenta.">
+    <meta property="og:title" content="Privacidad · Mach-T">
+    <meta property="og:description" content="Política de privacidad de Mach-T">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://mach-t.app/privacidad">
+    <title>Privacidad · Mach-T</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #7C3AED;
+            --purple-light: #9F67FF;
+            --cyan: #06B6D4;
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --border: rgba(255,255,255,0.08);
+            --text: #F9FAFB;
+            --subtext: #9CA3AF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+        }
+        .top-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 14px;
+        }
+        .top-bar a.back {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex; align-items: center; gap: 8px;
+            opacity: .85;
+            transition: opacity .2s;
+        }
+        .top-bar a.back:hover { opacity: 1; }
+        .top-bar .brand {
+            font-weight: 900;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--purple-light), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        main {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 48px 24px 96px;
+        }
+        h1 {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 30%, var(--purple-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .updated {
+            color: var(--subtext);
+            font-size: 13px;
+            margin-bottom: 36px;
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(124,58,237,0.12);
+            border: 1px solid rgba(124,58,237,0.25);
+            border-radius: 999px;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 36px;
+            margin-bottom: 12px;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px; height: 18px;
+            background: linear-gradient(180deg, var(--purple), var(--cyan));
+            border-radius: 2px;
+            margin-right: 10px;
+            vertical-align: -3px;
+        }
+        p {
+            color: #D4D4D8;
+            font-size: 15px;
+            margin-bottom: 14px;
+        }
+        ul, ol {
+            margin: 10px 0 18px 0;
+            padding-left: 22px;
+            color: #D4D4D8;
+            font-size: 15px;
+        }
+        li { margin-bottom: 8px; }
+        a {
+            color: var(--purple-light);
+            text-decoration: underline;
+            text-decoration-color: rgba(159,103,255,.5);
+            text-underline-offset: 3px;
+            transition: color .2s;
+        }
+        a:hover { color: var(--cyan); }
+        .callout {
+            background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(6,182,212,.08));
+            border: 1px solid rgba(124,58,237,.25);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin: 22px 0;
+        }
+        .callout strong { color: #fff; }
+        .delete-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        .delete-card ol { padding-left: 22px; margin-top: 12px; }
+        .footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            color: var(--subtext);
+            font-size: 13px;
+            text-align: center;
+        }
+        .footer a { font-weight: 600; }
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="/" class="back">← Volver</a>
+        <span class="brand">Mach-T</span>
+    </div>
+    <main>
+        <h1>Política de Privacidad</h1>
+        <span class="updated">Vigente desde 2026-03-27</span>
+
+        <p>Esta política aplica a la aplicación <strong>Mach-T</strong> (en adelante, "la Aplicación") para dispositivos móviles, creada por <strong>eSeATe</strong> (en adelante, "el Proveedor del Servicio") como un servicio gratuito. La Aplicación se ofrece "TAL CUAL".</p>
+
+        <h2>Información que recopilamos</h2>
+        <p>La Aplicación recopila información cuando la descargas y la usas. Esta información puede incluir:</p>
+        <ul>
+            <li>La dirección IP de tu dispositivo</li>
+            <li>Las páginas de la Aplicación que visitas, la fecha y hora de tu visita, el tiempo que pasaste en ellas</li>
+            <li>El tiempo total dedicado a la Aplicación</li>
+            <li>El sistema operativo de tu dispositivo móvil</li>
+        </ul>
+        <p>La Aplicación <strong>no recopila ubicación precisa</strong> de tu dispositivo.</p>
+        <p>La Aplicación <strong>no usa Inteligencia Artificial (IA)</strong> para procesar tus datos ni para ofrecer funcionalidades.</p>
+        <p>El Proveedor del Servicio puede usar la información que proporcionas para contactarte ocasionalmente con avisos importantes, notificaciones requeridas o promociones.</p>
+        <p>Para una mejor experiencia, la Aplicación puede pedirte cierta información identificable, incluyendo —pero no limitada a— tu correo electrónico. Esa información se conserva y se utiliza como se describe en esta política.</p>
+
+        <h2>Acceso de terceros</h2>
+        <p>Solo se transmite información agregada y anonimizada a servicios externos para ayudar a mejorar la Aplicación. El Proveedor del Servicio podrá compartir tu información con terceros en las formas descritas en esta política.</p>
+        <p>El Proveedor del Servicio puede divulgar la información:</p>
+        <ul>
+            <li>Cuando lo requiera la ley (subpoena u otro proceso legal similar);</li>
+            <li>Cuando crea de buena fe que la divulgación es necesaria para proteger sus derechos, tu seguridad o la de otros, investigar fraude o responder a una solicitud gubernamental;</li>
+            <li>Con proveedores de servicios de confianza que actúan en su nombre, no tienen uso independiente de la información y han aceptado las reglas de esta política.</li>
+        </ul>
+
+        <h2>Derechos de exclusión (opt-out)</h2>
+        <p>Puedes detener toda recopilación de información desinstalando la Aplicación, utilizando los procesos estándar disponibles en tu dispositivo o en la tienda de aplicaciones.</p>
+
+        <h2>Retención de datos</h2>
+        <p>El Proveedor del Servicio conservará los datos proporcionados por el usuario mientras uses la Aplicación y por un tiempo razonable después. Si quieres que se eliminen los datos que proporcionaste, contacta a <a href="mailto:ivandres.rr@gmail.com">ivandres.rr@gmail.com</a> y se responderá en un tiempo razonable.</p>
+
+        <h2>Menores</h2>
+        <p>El Proveedor del Servicio no usa la Aplicación para solicitar conscientemente datos ni para hacer marketing a menores de 13 años.</p>
+        <p>El Proveedor del Servicio no recopila conscientemente información identificable de menores. Se anima a los menores a no enviar nunca información personal a través de la Aplicación o servicios. Se anima a padres y tutores a monitorear el uso de internet de sus hijos y a hacer cumplir esta política instruyéndolos a no proporcionar información identificable sin permiso. Si tienes razones para creer que un menor ha proporcionado información identificable, contacta al Proveedor del Servicio en <a href="mailto:ivandres.rr@gmail.com">ivandres.rr@gmail.com</a> para que se tomen las acciones necesarias. También debes tener al menos 16 años para consentir el procesamiento de tu información personal en tu país (en algunos países puede consentir tu padre o tutor en tu nombre).</p>
+
+        <h2>Seguridad</h2>
+        <p>El Proveedor del Servicio se preocupa por la confidencialidad de tu información. Implementa medidas de protección físicas, electrónicas y procedimentales para proteger la información que procesa y mantiene.</p>
+
+        <h2>Cambios</h2>
+        <p>Esta Política de Privacidad puede actualizarse en cualquier momento. Te notificaremos los cambios actualizando esta página. Se recomienda consultar esta página con regularidad; el uso continuado se considera aprobación de todos los cambios.</p>
+
+        <h2>Consentimiento</h2>
+        <p>Al usar la Aplicación, consientes el procesamiento de tu información según se describe en esta Política de Privacidad y en sus enmiendas.</p>
+
+        <h2>Contacto</h2>
+        <p>Para cualquier pregunta sobre privacidad, escribe a <a href="mailto:ivandres.rr@gmail.com">ivandres.rr@gmail.com</a>.</p>
+
+        <hr>
+
+        <h2 id="eliminar-cuenta">Eliminación de cuenta</h2>
+        <div class="delete-card">
+            <p>Si deseas eliminar tu cuenta y todos los datos asociados de la app Mach-T, sigue estos pasos:</p>
+            <ol>
+                <li>Envía un correo a <a href="mailto:ivandres.rr@gmail.com">ivandres.rr@gmail.com</a></li>
+                <li>Usa el asunto: <strong>Eliminar mi cuenta — Mach-T</strong></li>
+                <li>Incluye en el cuerpo el correo asociado a tu cuenta.</li>
+            </ol>
+            <p style="margin-top:14px">Tu solicitud se procesará y tu cuenta y datos asociados se eliminarán permanentemente en un tiempo razonable. Recibirás un correo de confirmación una vez completada la eliminación.</p>
+            <div class="callout" style="margin-top:18px">
+                <strong>Importante:</strong> una vez eliminada la cuenta, esta acción no se puede deshacer. Todos tus datos, perfil e historial se eliminan de forma permanente.
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Mach-T · Construida por <a href="/">estudiantes de Unimag, para estudiantes de Unimag</a></p>
+            <p style="margin-top:8px;opacity:.6">Universidad del Magdalena · Santa Marta, Colombia</p>
+        </div>
+    </main>
+</body>
+</html>

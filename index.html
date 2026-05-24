@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="3;url=https://mach-t.app">
     <link rel="canonical" href="https://mach-t.app/">
     <meta name="description" content="Mach-T — Material académico, tienda estudiantil y comunidad real para estudiantes de la Universidad del Magdalena">
     <meta property="og:title" content="Mach-T — La app de Unimag">
@@ -950,7 +949,7 @@
     </style>
 </head>
 <body>
-<div id="moved-banner" role="status" style="position:relative;z-index:9999;background:linear-gradient(90deg,#7C3AED 0%,#06B6D4 100%);color:#fff;text-align:center;padding:14px 20px;font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(124,58,237,.4);line-height:1.5;">
+<div id="moved-banner" role="status" hidden style="position:relative;z-index:9999;background:linear-gradient(90deg,#7C3AED 0%,#06B6D4 100%);color:#fff;text-align:center;padding:14px 20px;font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(124,58,237,.4);line-height:1.5;">
     Nos mudamos a <a href="https://mach-t.app" style="color:#fff;text-decoration:underline;font-weight:800;">mach-t.app</a> — te redirigimos en 3 segundos.
     <a href="https://mach-t.app" style="display:inline-block;margin-left:10px;background:#fff;color:#7C3AED;padding:5px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;vertical-align:middle;">Ir ahora →</a>
 </div>
@@ -968,8 +967,8 @@
         </div>
         <h3 class="egg-title">Encontraste el manifiesto</h3>
         <p class="egg-sub">El documento detrás de Mach-T — por qué existe, para quién, y a dónde va.</p>
-        <a class="egg-btn" href="https://drive.google.com/uc?export=download&id=1VBO3Oic9ADlEl9YyG2YrvRIKOe9b960e" target="_blank" rel="noopener">
-            <span>📄</span><span>Descargar PDF</span>
+        <a class="egg-btn" href="https://drive.google.com/file/d/1VBO3Oic9ADlEl9YyG2YrvRIKOe9b960e/view" target="_blank" rel="noopener">
+            <span>📖</span><span>Leer manifiesto</span>
         </a>
     </div>
 </div>
@@ -1571,7 +1570,7 @@
         </div>
 
         <div class="web-cta-row">
-            <a href="https://mach-t-web.vercel.app" target="_blank" rel="noopener" class="btn-web">
+            <a href="https://web.mach-t.app" target="_blank" rel="noopener" class="btn-web">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                     <rect x="3" y="4" width="18" height="13" rx="2" stroke="white" stroke-width="2"/>
                     <path d="M8 21h8M12 17v4" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -1589,9 +1588,24 @@
 <footer>
     <p>Mach-T · Construida por <span>estudiantes de Unimag</span>, para estudiantes de Unimag</p>
     <p style="margin-top:6px;font-size:11px;opacity:.45">Universidad del Magdalena · Santa Marta, Colombia</p>
+    <nav style="margin-top:18px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:12px;opacity:.7">
+        <a href="/privacidad" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)">Privacidad</a>
+        <a href="/privacidad#eliminar-cuenta" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)">Eliminar cuenta</a>
+        <a href="https://web.mach-t.app" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)">Versión web</a>
+        <a href="mailto:ivandres.rr@gmail.com" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)">Contacto</a>
+    </nav>
 </footer>
 
 <script>
+    // ── Banner + redirect SOLO en el dominio viejo (QRs físicos) ──
+    // mach-t.app sirve este mismo archivo desde Vercel, pero ahí no se muestra
+    // ni se redirige (sería un loop).
+    if (location.hostname === 'ivandres21.github.io') {
+        const movedBanner = document.getElementById('moved-banner');
+        if (movedBanner) movedBanner.hidden = false;
+        setTimeout(() => { window.location.replace('https://mach-t.app/'); }, 3000);
+    }
+
     // ── Scroll reveal ──
     const observer = new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
@@ -1659,23 +1673,33 @@
         bar.style.width = pct + '%';
     }, { passive: true });
 
-    // ── Easter egg: 3 clicks en el logo → manifiesto ──
-    const logoEl = document.getElementById('logoWrap');
+    // ── Easter egg: tecleá "MACH" en cualquier parte → manifiesto ──
+    // (Desktop) o long-press de 1.6s sobre el logo (Mobile).
     const eggOverlay = document.getElementById('eggOverlay');
     const eggClose = document.getElementById('eggClose');
-    let eggClicks = 0;
-    let eggTimer = null;
+    const logoEl = document.getElementById('logoWrap');
+    const SECRET = 'mach';
+    let typed = '';
+    function openEgg() {
+        if (eggOverlay) eggOverlay.classList.add('visible');
+    }
+    window.addEventListener('keydown', (e) => {
+        if (e.target.matches && e.target.matches('input, textarea, [contenteditable]')) return;
+        const k = (e.key || '').toLowerCase();
+        if (!/^[a-z]$/.test(k)) { typed = ''; return; }
+        typed = (typed + k).slice(-SECRET.length);
+        if (typed === SECRET) { openEgg(); typed = ''; }
+    });
     if (logoEl) {
-        logoEl.addEventListener('click', () => {
-            eggClicks += 1;
-            if (eggTimer) clearTimeout(eggTimer);
-            eggTimer = setTimeout(() => { eggClicks = 0; }, 1500);
-            if (eggClicks >= 3) {
-                eggClicks = 0;
-                clearTimeout(eggTimer);
-                eggOverlay.classList.add('visible');
-            }
-        });
+        let pressTimer = null;
+        const startPress = () => { pressTimer = setTimeout(openEgg, 1600); };
+        const cancelPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+        logoEl.addEventListener('touchstart', startPress, { passive: true });
+        logoEl.addEventListener('touchend', cancelPress);
+        logoEl.addEventListener('touchmove', cancelPress, { passive: true });
+        logoEl.addEventListener('mousedown', startPress);
+        logoEl.addEventListener('mouseup', cancelPress);
+        logoEl.addEventListener('mouseleave', cancelPress);
     }
     if (eggClose) eggClose.addEventListener('click', () => eggOverlay.classList.remove('visible'));
     if (eggOverlay) eggOverlay.addEventListener('click', (e) => {
