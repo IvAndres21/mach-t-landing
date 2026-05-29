@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.eseate.macht",
+      "sha256_cert_fingerprints": [
+        "AC:CD:B9:48:36:76:85:C5:27:D3:CB:11:2B:A2:D0:12:22:13:38:94:A9:7F:70:FB:FA:AA:24:9A:FD:C9:9B:22",
+        "1A:25:CB:BD:A3:77:E1:5F:A0:24:BD:99:F5:96:17:5C:F5:06:D6:53:5F:D1:77:D7:62:10:D3:E5:C1:2C:5B:42"
+      ]
+    }
+  }
+]

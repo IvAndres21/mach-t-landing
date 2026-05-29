@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="apple-itunes-app" content="app-id=6766287371">
+  <title>Enlace expirado · Mach-T</title>
+  <link rel="canonical" href="https://mach-t.app/auth/expirado">
+  <link rel="icon" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #12121a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: #9F67FF;
+      letter-spacing: -1.2px;
+    }
+    .icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      background: rgba(245,158,11,0.14);
+      border: 2px solid rgba(245,158,11,0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      line-height: 1;
+      margin: 6px 0 2px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #f9fafb;
+    }
+    p {
+      font-size: 14px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+    .actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn {
+      display: inline-block;
+      background: #7C3AED;
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 15px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      width: 100%;
+      transition: background 0.15s;
+      border: 0;
+      cursor: pointer;
+    }
+    .btn:hover { background: #6D28D9; }
+    .btn.secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn.secondary:hover { background: rgba(255,255,255,0.10); }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 6px 0;
+    }
+    .stores {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    @keyframes pulseGlow {
+      0%,100% { box-shadow: 0 0 18px rgba(124,58,237,.5); }
+      50%     { box-shadow: 0 0 48px rgba(124,58,237,.9), 0 0 90px rgba(124,58,237,.25); }
+    }
+    @keyframes appStoreGlow {
+      0%,100% { box-shadow: 0 16px 44px rgba(6,182,212,.26), 0 0 0 1px rgba(255,255,255,.06) inset; }
+      50%     { box-shadow: 0 18px 58px rgba(37,99,235,.48), 0 0 90px rgba(6,182,212,.22), 0 0 0 1px rgba(255,255,255,.1) inset; }
+    }
+    .btn-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #7C3AED;
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 24px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 285px;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      animation: pulseGlow 3s ease-in-out infinite;
+      transition: transform .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-play:hover { transform: scale(1.04); background: #9F67FF; }
+    .btn-soon {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #06B6D4 0%, #2563EB 48%, #7C3AED 100%);
+      border: 1px solid rgba(125,211,252,.55);
+      color: #fff;
+      text-decoration: none;
+      padding: 13px 24px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 285px;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 16px 44px rgba(6,182,212,.26), 0 0 0 1px rgba(255,255,255,.06) inset;
+      animation: appStoreGlow 3.2s ease-in-out infinite;
+      transition: transform .2s, box-shadow .2s, filter .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-soon:hover {
+      transform: scale(1.04);
+      filter: brightness(1.08);
+      box-shadow: 0 20px 64px rgba(6,182,212,.38), 0 0 0 1px rgba(255,255,255,.12) inset;
+    }
+    .store-text { display: flex; flex-direction: column; align-items: flex-start; }
+    .store-sub  { font-size: 10px; opacity: .65; font-weight: 400; }
+    .store-name { font-size: 16px; font-weight: 700; line-height: 1; }
+    .hint {
+      font-size: 12px;
+      color: #6D6D70;
+      line-height: 1.5;
+    }
+    .footer {
+      font-size: 12px;
+      color: #4b5563;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Mach-T</div>
+    <div class="icon" id="icon">⏳</div>
+    <h1 id="title">Este enlace ya no es válido</h1>
+    <p id="body">El enlace expiró o ya fue usado. Solicita uno nuevo desde la app.</p>
+
+    <div class="actions">
+      <a class="btn" id="primaryCta" href="https://mach-t.app/open?to=login">Abrir Mach-T</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="hint">¿No tienes la app aún?</p>
+    <div class="stores">
+      <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.eseate.macht">
+        <svg width="22" height="24" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1.5L20 12L1 22.5V1.5Z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <div class="store-text">
+          <span class="store-sub">Disponible en</span>
+          <span class="store-name">Google Play</span>
+        </div>
+      </a>
+      <a class="btn-soon" href="https://apps.apple.com/app/id6766287371">
+        <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.5 12.5C16.5 9.5 18.5 8 18.5 8C17 6 15 5.5 13.5 5.5C12 5.5 10.5 6.5 9.5 6.5C8.5 6.5 7 5.5 5.5 5.5C3 5.5 0.5 8 0.5 11.5C0.5 16.5 4.5 22.5 7 22.5C8 22.5 9 21.5 10 21.5C11 21.5 12 22.5 13 22.5C15.5 22.5 18.5 17 18.5 17C18.5 17 16.5 16 16.5 12.5Z" fill="white"/><path d="M13 1C13 1 14.5 2 14.5 4.5C14.5 4.5 13 5 11.5 4C11.5 4 11 2 13 1Z" fill="white"/></svg>
+        <div class="store-text">
+          <span class="store-sub">Disponible en</span>
+          <span class="store-name">App Store</span>
+        </div>
+      </a>
+    </div>
+
+    <p class="footer">La red académica de tu universidad</p>
+  </div>
+
+  <script src="/auth/expirado/messages.js"></script>
+</body>
+</html>

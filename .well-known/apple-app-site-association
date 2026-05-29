@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "6RVRUK5QFK.com.eseate.macht",
+        "paths": [
+          "/d/*",
+          "/open",
+          "/open/*"
+        ]
+      }
+    ]
+  }
+}

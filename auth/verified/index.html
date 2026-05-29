@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="apple-itunes-app" content="app-id=6766287371">
+  <title>Cuenta verificada · Mach-T</title>
+  <link rel="canonical" href="https://mach-t.app/auth/verified">
+  <link rel="icon" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #12121a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: #9F67FF;
+      letter-spacing: -1.2px;
+    }
+    .check {
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      background: rgba(34,197,94,0.14);
+      border: 2px solid rgba(34,197,94,0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      line-height: 1;
+      margin: 6px 0 2px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #f9fafb;
+    }
+    p.subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+    .actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn {
+      display: inline-block;
+      background: #7C3AED;
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 15px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      width: 100%;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #6D28D9; }
+    .btn.secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn.secondary:hover { background: rgba(255,255,255,0.10); }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 6px 0;
+    }
+    .stores {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer {
+      font-size: 12px;
+      color: #4b5563;
+      margin-top: 2px;
+    }
+    .hint {
+      font-size: 12px;
+      color: #6D6D70;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Mach-T</div>
+    <div class="check">✓</div>
+    <h1>¡Tu cuenta está verificada!</h1>
+    <p class="subtitle">Ya puedes iniciar sesión y empezar a compartir material con tus compañeros.</p>
+
+    <div class="actions">
+      <a class="btn" href="https://mach-t.app/open?to=login" id="openApp">Abrir Mach-T</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="hint">¿No tienes la app aún?</p>
+    <div class="stores">
+      <a class="btn secondary" href="https://apps.apple.com/app/id6766287371">Descargar en App Store</a>
+      <a class="btn secondary" href="https://play.google.com/store/apps/details?id=com.eseate.macht">Descargar en Google Play</a>
+    </div>
+
+    <p class="footer">La red académica de tu universidad</p>
+  </div>
+
+  <script src="/auth/verified/bootstrap.js"></script>
+</body>
+</html>

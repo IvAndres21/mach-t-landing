@@ -4,12 +4,57 @@
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/d/:id", "destination": "https://web.mach-t.app/d/:id" }
+  ],
   "redirects": [
-    { "source": "/(.*)", "has": [{ "type": "host", "value": "www.mach-t.app" }], "destination": "https://mach-t.app/$1", "permanent": true },
+    { "source": "/((?!\\.well-known).*)", "has": [{ "type": "host", "value": "www.mach-t.app" }], "destination": "https://mach-t.app/$1", "permanent": true },
     { "source": "/ios", "destination": "https://apps.apple.com/app/id6766287371", "permanent": false },
     { "source": "/app-store", "destination": "https://apps.apple.com/app/id6766287371", "permanent": false },
     { "source": "/play", "destination": "https://play.google.com/store/apps/details?id=com.eseate.macht", "permanent": false },
     { "source": "/app", "destination": "https://mach-t.app/#download", "permanent": false },
     { "source": "/descarga", "destination": "https://mach-t.app/#download", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/reset",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' https://esm.sh; connect-src https://ekoyzdkadgaefvlwrgsb.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" }
+      ]
+    },
+    {
+      "source": "/auth/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'" }
+      ]
+    },
+    {
+      "source": "/.well-known/apple-app-site-association",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    }
   ]
 }

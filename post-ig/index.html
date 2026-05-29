@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mach-T · Carrusel Instagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  :root {
+    --bg: #09090D;
+    --surface: #13141B;
+    --elevated: #1A1C25;
+    --border: #2A2E3D;
+    --primary: #7C3AED;
+    --primary-light: #A78BFA;
+    --primary-dark: #5B21B6;
+    --primary-faded: rgba(124, 58, 237, 0.18);
+    --primary-glow: rgba(124, 58, 237, 0.28);
+    --text: #FAFAFC;
+    --text-secondary: #B3B8C9;
+    --text-muted: #6B7186;
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #060608;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-header {
+    padding: 32px 24px;
+    text-align: center;
+    border-bottom: 1px solid #1a1a22;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-ghost { background: #1a1a22; color: var(--text-secondary); }
+  .btn-ghost:hover { background: #22232b; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 32px;
+    padding: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .slide-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* Slide real 1080x1080, escala al contenedor */
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    transform-origin: top left;
+    background: var(--bg);
+  }
+
+  .slide-scaler {
+    width: 340px;
+    height: 340px;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid #1a1a22;
+    background: var(--bg);
+  }
+
+  .slide-scaler .slide {
+    transform: scale(0.3148148);
+  }
+
+  .slide-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .slide-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .download-btn {
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 8px;
+  }
+
+  /* ======= Slide content styles ======= */
+
+  .slide-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+  }
+
+  .bg-glow {
+    position: absolute;
+    width: 1400px;
+    height: 1400px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .bg-glow.top-right {
+    top: -500px; right: -500px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.55) 0%, rgba(124, 58, 237, 0.25) 30%, rgba(124, 58, 237, 0) 65%);
+  }
+  .bg-glow.bottom-left {
+    bottom: -550px; left: -500px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.35) 0%, rgba(167, 139, 250, 0.15) 30%, rgba(167, 139, 250, 0) 65%);
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .brand-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(124, 58, 237, 0.4);
+  }
+
+  .brand-name {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+
+  .brand-name .dot {
+    color: var(--primary-light);
+  }
+
+  .slide-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-faded);
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    padding: 10px 20px;
+    border-radius: 999px;
+    color: var(--primary-light);
+    font-size: 20px;
+    font-weight: 600;
+    width: fit-content;
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .slide-number {
+    position: absolute;
+    bottom: 60px;
+    right: 80px;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(124, 58, 237, 0.12);
+    letter-spacing: -4px;
+    z-index: 1;
+    line-height: 1;
+  }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 60px;
+    left: 80px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 500;
+    z-index: 2;
+  }
+
+  .slide-footer .handle {
+    color: var(--primary-light);
+    font-weight: 600;
+  }
+
+  /* ---- Slide 1 (Cover) ---- */
+
+  .cover {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cover .logo-huge {
+    width: 260px;
+    height: 260px;
+    border-radius: 60px;
+    box-shadow: 0 40px 100px rgba(124, 58, 237, 0.55);
+    margin-bottom: 52px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cover h1 {
+    font-size: 120px;
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 0.95;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cover h1 .highlight {
+    color: var(--primary-light);
+  }
+
+  .cover .tagline {
+    margin-top: 36px;
+    font-size: 34px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    max-width: 840px;
+    line-height: 1.35;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cover .uni-pill {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--primary-faded);
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    padding: 14px 30px;
+    border-radius: 999px;
+    color: var(--primary-light);
+    font-size: 24px;
+    font-weight: 600;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* ---- Slide content title ---- */
+
+  .section-title {
+    font-size: 92px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-top: 40px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .section-title .accent { color: var(--primary-light); }
+
+  .section-subtitle {
+    font-size: 32px;
+    color: var(--text-secondary);
+    margin-top: 28px;
+    line-height: 1.4;
+    font-weight: 400;
+    max-width: 880px;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* ---- Feature cards / lists ---- */
+
+  .feature-list {
+    margin-top: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(26, 28, 37, 0.6);
+    border: 1px solid var(--border);
+    padding: 22px 26px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--primary-faded);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .feature-text {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .feature-text .muted {
+    color: var(--text-muted);
+    font-size: 22px;
+    font-weight: 400;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ---- Warning / security ---- */
+
+  .callout {
+    display: flex;
+    gap: 24px;
+    background: rgba(124, 58, 237, 0.12);
+    border: 2px solid rgba(167, 139, 250, 0.35);
+    padding: 34px;
+    border-radius: 28px;
+    margin-top: 40px;
+    align-items: flex-start;
+    z-index: 2;
+    position: relative;
+  }
+
+  .callout-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .callout-body h3 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .callout-body p {
+    font-size: 24px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+
+  /* ---- Visual split (two cards) ---- */
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-top: 44px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .compare-card {
+    padding: 32px;
+    border-radius: 22px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+  }
+
+  .compare-card.no {
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+  }
+  .compare-card.yes {
+    border-color: rgba(34, 197, 94, 0.4);
+    background: rgba(34, 197, 94, 0.08);
+  }
+
+  .compare-card .mark {
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .compare-card.no .mark { color: var(--error); }
+  .compare-card.yes .mark { color: var(--success); }
+
+  .compare-card h4 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .compare-card p {
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  /* ---- Stats / numbers ---- */
+
+  .big-number {
+    font-size: 160px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -6px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* ---- Final CTA ---- */
+
+  .cta {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cta .logo-large {
+    width: 200px;
+    height: 200px;
+    border-radius: 48px;
+    box-shadow: 0 40px 100px rgba(124, 58, 237, 0.55);
+    margin-bottom: 44px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cta h1 {
+    font-size: 128px;
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 0.95;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cta h1 .line2 {
+    color: var(--primary-light);
+  }
+
+  .cta .sub {
+    margin-top: 32px;
+    font-size: 32px;
+    color: var(--text-secondary);
+    max-width: 820px;
+    line-height: 1.35;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cta .pill-row {
+    margin-top: 44px;
+    display: flex;
+    gap: 16px;
+    z-index: 2;
+    position: relative;
+  }
+
+  .cta .pill {
+    padding: 16px 28px;
+    border-radius: 999px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .cta .pill.primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.4);
+  }
+
+  .cta .pill.ghost {
+    background: transparent;
+    color: var(--primary-light);
+    border: 2px solid rgba(167, 139, 250, 0.5);
+  }
+
+  .store-row {
+    margin-top: 48px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    z-index: 2;
+    position: relative;
+  }
+
+  .store-pill {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 28px;
+    border-radius: 22px;
+    min-width: 320px;
+  }
+
+  .store-pill.available {
+    background: var(--primary);
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.4);
+  }
+
+  .store-pill.soon {
+    background: transparent;
+    border: 2px solid rgba(167, 139, 250, 0.5);
+  }
+
+  .store-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .store-pill.soon .store-icon {
+    background: rgba(167, 139, 250, 0.15);
+  }
+
+  .store-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .store-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .store-top {
+    font-size: 18px;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  .store-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .store-pill.available .store-text { color: white; }
+  .store-pill.soon .store-text { color: var(--primary-light); }
+
+  /* ---- Profile picture slide ---- */
+  .profile-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, #2a1656 0%, #0a0510 70%, #060608 100%);
+  }
+  .profile-glow {
+    position: absolute;
+    width: 1400px;
+    height: 1400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.55) 0%, rgba(124, 58, 237, 0.25) 30%, rgba(124, 58, 237, 0) 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .slide-inner.profile {
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .profile-icon {
+    width: 820px;
+    height: 820px;
+    border-radius: 220px;
+    box-shadow: 0 60px 160px rgba(124, 58, 237, 0.65);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    position: absolute;
+    bottom: 60px;
+    right: 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--primary-light);
+    font-size: 22px;
+    font-weight: 600;
+    z-index: 2;
+  }
+
+  /* ---- Icon mockup bubbles ---- */
+
+  .icon-bubble {
+    width: 120px;
+    height: 120px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    box-shadow: 0 20px 50px rgba(124, 58, 237, 0.4);
+  }
+
+  .big-feature-icon {
+    width: 140px;
+    height: 140px;
+    border-radius: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    box-shadow: 0 24px 60px rgba(124, 58, 237, 0.45);
+    margin-top: 40px;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* Scroll progress */
+  #progress-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--primary);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    display: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-overlay"></div>
+
+<div class="page-header">
+  <h1>Mach-T · Carrusel Instagram</h1>
+  <p>12 diapositivas 1080×1080 con la estética de la app. Haz clic en <b>Descargar</b> en cada tarjeta, o en <b>Descargar todas</b>.</p>
+  <div class="actions">
+    <button class="btn" id="download-all">Descargar todas (ZIP secuencial)</button>
+    <button class="btn btn-ghost" onclick="window.print()">Imprimir / PDF</button>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  // ====== Slides data ======
+  const ICON = './icon.png';
+
+  const slides = [
+    {
+      id: 0,
+      type: 'profile',
+      render: () => `
+        <div class="profile-bg"></div>
+        <div class="profile-glow"></div>
+        <div class="slide-inner profile">
+          <img class="profile-icon" src="${ICON}" alt="Mach-T">
+        </div>
+      `
+    },
+    {
+      id: 1,
+      type: 'cover',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="bg-glow bottom-left"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner cover">
+          <img class="logo-huge" src="${ICON}" alt="Mach-T">
+          <h1>Mach<span class="highlight">-T</span></h1>
+          <p class="tagline">La app exclusiva para estudiantes de la Universidad del Magdalena</p>
+          <div class="uni-pill">
+            <span style="font-size:28px">✨</span> Todo lo que necesitas en la U, en una sola app
+          </div>
+        </div>
+      `
+    },
+    {
+      id: 2,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Todo lo que<br>un estudiante necesita<span class="accent">.</span></h2>
+          <p class="section-subtitle">Documentos, tutorías, anuncios, tienda estudiantil y más — todo en una sola app, hecha por y para estudiantes de Unimagdalena.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">📄</div><div class="feature-text">Comparte y descarga documentos</div></div>
+            <div class="feature-item"><div class="feature-icon">🎓</div><div class="feature-text">Pide y ofrece tutorías</div></div>
+            <div class="feature-item"><div class="feature-icon">🛍️</div><div class="feature-text">Compra y vende entre estudiantes</div></div>
+          </div>
+          <div class="slide-number">01</div>
+        </div>
+      `
+    },
+    {
+      id: 3,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="bg-glow bottom-left"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Tu correo<br>institucional,<br><span class="accent">seguro.</span></h2>
+          <div class="compare">
+            <div class="compare-card no">
+              <div class="mark">✕</div>
+              <h4>NO pedimos</h4>
+              <p>La contraseña de tu correo institucional. Jamás te pediremos eso.</p>
+            </div>
+            <div class="compare-card yes">
+              <div class="mark">✓</div>
+              <h4>TÚ eliges</h4>
+              <p>Creas la contraseña que quieras — solo para Mach-T, no la del correo.</p>
+            </div>
+          </div>
+          <div class="slide-number">02</div>
+        </div>
+      `
+    },
+    {
+      id: 4,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">¿Por qué pedimos<br>el correo<br><span class="accent">unimag?</span></h2>
+          <p class="section-subtitle">Es nuestro único filtro para garantizar que <b style="color:#fff">solo estudiantes de Unimagdalena</b> usen la app. Sin él, cualquiera podría entrar.</p>
+          <div class="callout">
+            <div class="callout-icon">🛡️</div>
+            <div class="callout-body">
+              <h3>Comunidad cerrada = más confianza</h3>
+              <p>Todo lo que se comparte aquí viene de gente de tu universidad. Sin extraños, sin spam, sin bots.</p>
+            </div>
+          </div>
+          <div class="slide-number">03</div>
+        </div>
+      `
+    },
+    {
+      id: 5,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Sube y descarga<br><span class="accent">contenido.</span></h2>
+          <p class="section-subtitle">Apuntes, parciales, guías, exposiciones, resúmenes. Comparte PDFs e imágenes con el resto de unimag al instante.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">📚</div><div class="feature-text">Busca por materia, profesor o semestre</div></div>
+            <div class="feature-item"><div class="feature-icon">⚡</div><div class="feature-text">Descarga rápida, sin anuncios, sin trabas</div></div>
+            <div class="feature-item"><div class="feature-icon">👀</div><div class="feature-text">Previsualiza antes de abrir<span class="muted">Miniaturas automáticas para PDFs</span></div></div>
+          </div>
+          <div class="slide-number">04</div>
+        </div>
+      `
+    },
+    {
+      id: 6,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="bg-glow bottom-left"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Anuncios<br><span class="accent">anónimos.</span></h2>
+          <p class="section-subtitle">Habla sin miedo. Denuncia, opina, comparte lo que nadie se atreve a decir en voz alta — sin que nadie sepa quién eres.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">🎭</div><div class="feature-text">Publica con tu nombre o anónimo</div></div>
+            <div class="feature-item"><div class="feature-icon">💬</div><div class="feature-text">Comentarios, apoyos y votos</div></div>
+            <div class="feature-item"><div class="feature-icon">🔥</div><div class="feature-text">Lo viral llega a todos en segundos</div></div>
+          </div>
+          <div class="slide-number">05</div>
+        </div>
+      `
+    },
+    {
+      id: 7,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Tutorías entre<br><span class="accent">estudiantes.</span></h2>
+          <p class="section-subtitle">¿Necesitas ayuda en una materia? ¿O eres bueno y quieres ganar un extra enseñando? Publica o pide tutoría en minutos.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">📝</div><div class="feature-text">Pide tutoría (Demandas)</div></div>
+            <div class="feature-item"><div class="feature-icon">🧑‍🏫</div><div class="feature-text">Ofrece tus servicios (Operativos)</div></div>
+            <div class="feature-item"><div class="feature-icon">💸</div><div class="feature-text">Contacto directo, sin intermediarios</div></div>
+          </div>
+          <div class="slide-number">06</div>
+        </div>
+      `
+    },
+    {
+      id: 8,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Tienda<br><span class="accent">estudiantil.</span></h2>
+          <p class="section-subtitle">Compra y vende entre compañeros de tu misma universidad. Libros, calculadoras, uniformes, comida, servicios — lo que sea.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">🛒</div><div class="feature-text">Publica tu producto en segundos</div></div>
+            <div class="feature-item"><div class="feature-icon">📸</div><div class="feature-text">Hasta varias fotos por producto</div></div>
+            <div class="feature-item"><div class="feature-icon">💬</div><div class="feature-text">Contacto directo por WhatsApp</div></div>
+          </div>
+          <div class="slide-number">07</div>
+        </div>
+      `
+    },
+    {
+      id: 9,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Notificaciones<br><span class="accent">inteligentes.</span></h2>
+          <p class="section-subtitle">Entérate solo de lo que te interesa. Tú eliges qué recibir — no te saturamos.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">🔔</div><div class="feature-text">Anuncios, tutorías, comentarios, votos</div></div>
+            <div class="feature-item"><div class="feature-icon">🎛️</div><div class="feature-text">Activa o silencia cada tipo<span class="muted">Control total desde Ajustes</span></div></div>
+            <div class="feature-item"><div class="feature-icon">⏱️</div><div class="feature-text">Lo urgente te llega al instante</div></div>
+          </div>
+          <div class="slide-number">08</div>
+        </div>
+      `
+    },
+    {
+      id: 10,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="bg-glow bottom-left"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Tus datos,<br><span class="accent">blindados.</span></h2>
+          <p class="section-subtitle">Todo lo que subes está protegido. No vendemos, no compartimos, no rastreamos más de lo necesario.</p>
+          <div class="feature-list">
+            <div class="feature-item"><div class="feature-icon">🔒</div><div class="feature-text">Conexión cifrada extremo a extremo</div></div>
+            <div class="feature-item"><div class="feature-icon">🛡️</div><div class="feature-text">Políticas de acceso por usuario<span class="muted">Nadie ve lo que no le corresponde</span></div></div>
+            <div class="feature-item"><div class="feature-icon">🙈</div><div class="feature-text">Modo anónimo real en anuncios</div></div>
+          </div>
+          <div class="slide-number">09</div>
+        </div>
+      `
+    },
+    {
+      id: 11,
+      type: 'content',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner">
+          <div class="brand-row">
+            <img class="brand-logo" src="${ICON}">
+            <div class="brand-name">Mach<span class="dot">-T</span></div>
+          </div>
+          <h2 class="section-title">Tú mandas<span class="accent">.</span></h2>
+          <p class="section-subtitle">Si quieres irte, te vas. Sin preguntas, sin correos molestos, sin dejarte nada atrás.</p>
+          <div class="callout">
+            <div class="callout-icon">🗑️</div>
+            <div class="callout-body">
+              <h3>Borra tu cuenta cuando quieras</h3>
+              <p>Un toque y eliminamos tu cuenta con TODOS tus datos: documentos, productos, anuncios, fotos. Todo desaparece de verdad.</p>
+            </div>
+          </div>
+          <div class="slide-number">10</div>
+        </div>
+      `
+    },
+    {
+      id: 12,
+      type: 'cta',
+      render: () => `
+        <div class="bg-glow top-right"></div>
+        <div class="bg-glow bottom-left"></div>
+        <div class="grid-bg"></div>
+        <div class="slide-inner cta">
+          <img class="logo-large" src="${ICON}">
+          <h1>Únete a<br><span class="line2">Mach-T</span></h1>
+          <p class="sub">Descárgala, usa tu correo @unimagdalena.edu.co y crea tu propia contraseña. Así de simple.</p>
+          <div class="store-row">
+            <div class="store-pill available">
+              <div class="store-icon">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="white">
+                  <path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
+                </svg>
+              </div>
+              <div class="store-text">
+                <span class="store-top">Disponible en</span>
+                <span class="store-name">Google Play</span>
+              </div>
+            </div>
+            <div class="store-pill soon">
+              <div class="store-icon">
+                <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" fill="#A78BFA">
+                  <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                </svg>
+              </div>
+              <div class="store-text">
+                <span class="store-top">Próximamente en</span>
+                <span class="store-name">App Store</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  ];
+
+  // ====== Render grid ======
+  const grid = document.getElementById('grid');
+
+  slides.forEach((s, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'slide-wrapper';
+
+    const scaler = document.createElement('div');
+    scaler.className = 'slide-scaler';
+
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    slide.id = `slide-${s.id}`;
+    slide.innerHTML = s.render();
+
+    scaler.appendChild(slide);
+
+    const meta = document.createElement('div');
+    meta.className = 'slide-meta';
+    meta.innerHTML = `
+      <span class="slide-label">Diapositiva ${String(i+1).padStart(2,'0')} / ${slides.length}</span>
+      <button class="btn download-btn" data-id="${s.id}">⬇ Descargar</button>
+    `;
+
+    wrapper.appendChild(scaler);
+    wrapper.appendChild(meta);
+    grid.appendChild(wrapper);
+  });
+
+  // ====== Download handlers ======
+  // Convertimos el icono a data URL una sola vez para evitar problemas CORS
+  let iconDataUrl = null;
+  async function loadIconAsDataUrl() {
+    if (iconDataUrl) return iconDataUrl;
+    try {
+      const res = await fetch(ICON);
+      const blob = await res.blob();
+      iconDataUrl = await new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
+      // Reemplazamos en todas las imagenes ya renderizadas
+      document.querySelectorAll('.slide img').forEach(img => {
+        if (img.src.includes('icon.png')) img.src = iconDataUrl;
+      });
+      return iconDataUrl;
+    } catch (e) {
+      console.warn('No se pudo convertir el icono a data URL:', e);
+      return null;
+    }
+  }
+
+  async function renderSlideToCanvas(id) {
+    const original = document.getElementById(`slide-${id}`);
+    // Crear contenedor off-screen a tamaño real
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.top = '0';
+    holder.style.left = '0';
+    holder.style.width = '1080px';
+    holder.style.height = '1080px';
+    holder.style.zIndex = '-9999';
+    holder.style.opacity = '0';
+    holder.style.pointerEvents = 'none';
+
+    const clone = original.cloneNode(true);
+    clone.style.transform = 'none';
+    clone.style.position = 'relative';
+    clone.style.width = '1080px';
+    clone.style.height = '1080px';
+    holder.appendChild(clone);
+    document.body.appendChild(holder);
+
+    // Asegurar que las imagenes dentro del clone estén cargadas
+    const imgs = clone.querySelectorAll('img');
+    await Promise.all(Array.from(imgs).map(img => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = img.onerror = resolve;
+      });
+    }));
+
+    try {
+      const canvas = await html2canvas(clone, {
+        width: 1080,
+        height: 1080,
+        scale: 1,
+        backgroundColor: '#09090D',
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+      });
+      return canvas;
+    } finally {
+      document.body.removeChild(holder);
+    }
+  }
+
+  async function downloadSlide(id) {
+    try {
+      await loadIconAsDataUrl();
+      const canvas = await renderSlideToCanvas(id);
+      const link = document.createElement('a');
+      link.download = `mach-t-ig-${String(id).padStart(2,'0')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error('Error descargando slide', id, e);
+      alert('No se pudo descargar la diapositiva. Revisa la consola. Si abriste el archivo con doble clic, usa el servidor local: ejecuta en terminal "cd landing/post-ig && python3 -m http.server 8080" y abre http://localhost:8080');
+    }
+  }
+
+  document.querySelectorAll('.download-btn').forEach(btn => {
+    btn.addEventListener('click', () => downloadSlide(btn.dataset.id));
+  });
+
+  document.getElementById('download-all').addEventListener('click', async () => {
+    const overlay = document.getElementById('progress-overlay');
+    overlay.style.display = 'block';
+    for (let i = 0; i < slides.length; i++) {
+      overlay.textContent = `Descargando ${i+1} / ${slides.length}...`;
+      await downloadSlide(slides[i].id);
+      await new Promise(r => setTimeout(r, 400));
+    }
+    overlay.textContent = '¡Listo! Revisa tu carpeta de descargas.';
+    setTimeout(() => { overlay.style.display = 'none'; }, 2500);
+  });
+</script>
+
+</body>
+</html>
