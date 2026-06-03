@@ -951,6 +951,149 @@
             border: 1px solid rgba(167, 139, 250, 0.28);
             margin-bottom: 4px;
         }
+
+        /* Navbar oculto en móvil (solo aparece en escritorio) */
+        .site-nav { display: none; }
+
+        /* ════════════════════════════════════════════
+           ESCRITORIO  (≥1024px)
+           Todo lo de abajo SOLO aplica en pantallas
+           grandes. El móvil conserva los estilos base.
+        ════════════════════════════════════════════ */
+        @media (min-width: 1024px) {
+            html { scroll-padding-top: 84px; }
+
+            /* ── Navbar fijo ── */
+            .site-nav {
+                display: flex;
+                position: fixed;
+                top: 0; left: 0; right: 0;
+                z-index: 1000;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 44px;
+                background: rgba(10,10,15,.72);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-brand {
+                display: flex; align-items: center; gap: 10px;
+                font-weight: 800; font-size: 18px; letter-spacing: -.02em;
+                color: var(--text); text-decoration: none;
+            }
+            .nav-brand img {
+                width: 34px; height: 34px;
+                image-rendering: pixelated;
+                filter: drop-shadow(0 0 8px rgba(124,58,237,.6));
+            }
+            .nav-links { display: flex; align-items: center; gap: 32px; }
+            .nav-links a {
+                color: var(--subtext); text-decoration: none;
+                font-size: 14px; font-weight: 600;
+                transition: color .2s;
+            }
+            .nav-links a:hover { color: var(--text); }
+            .nav-cta {
+                background: var(--purple); color: #fff; text-decoration: none;
+                font-size: 14px; font-weight: 700;
+                padding: 10px 22px; border-radius: 12px;
+                transition: transform .2s, background .2s;
+            }
+            .nav-cta:hover { transform: translateY(-1px); background: var(--purple-light); }
+
+            /* ── HERO a dos columnas ── */
+            #hero {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 72px;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 96px 44px;
+                text-align: left;
+            }
+            .hero-content {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                max-width: 560px;
+                flex: 1 1 auto;
+            }
+            .hero-content .hero-quote,
+            .hero-content .hero-sub { margin-left: 0; margin-right: 0; }
+            #hero h1 { font-size: clamp(76px, 7vw, 112px); }
+            .btn-group { flex-direction: row; align-items: center; gap: 14px; }
+            .btn-play, .btn-soon { width: auto; max-width: none; }
+
+            .hero-visual {
+                order: 1;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .hero-visual .logo-wrap { margin: 0; }
+            .hero-visual .logo-wrap img { width: 360px; height: 360px; }
+            .scroll-cue { display: none; }
+
+            /* ── PITCH ── */
+            #pitch { padding: 120px 44px; }
+            .pitch-big { max-width: 860px; font-size: clamp(40px, 4vw, 54px); }
+            .pitch-body { max-width: 640px; font-size: 18px; }
+
+            /* ── TESTIMONIAL ── */
+            #testimonial { max-width: 820px; padding-bottom: 90px; }
+            .testi-card { padding: 46px 50px; }
+
+            /* ── Títulos de sección ── */
+            .section-title { font-size: clamp(36px, 3.4vw, 46px); margin-bottom: 60px; }
+
+            /* ── FEATURES: 4 columnas ── */
+            #features { max-width: 1180px; padding: 120px 44px; }
+            .feat-grid { grid-template-columns: repeat(4, 1fr); gap: 22px; }
+            .feat-card { padding: 30px 26px; }
+
+            /* ── SCREENSHOTS: fila centrada, sin scroll ── */
+            #screenshots { padding: 120px 0 90px; }
+            .screenshots-head { max-width: 1180px; }
+            .phones-scroll {
+                justify-content: center;
+                max-width: 1180px;
+                margin: 0 auto;
+                overflow: visible;
+                gap: 28px;
+                padding: 32px 44px 20px;
+            }
+            .phones-scroll::after { display: none; }
+            .dots { display: none; }
+
+            /* ── MANIFESTO: dos columnas ── */
+            #manifesto { max-width: 1000px; padding: 120px 44px; }
+            .mani-quote { font-size: clamp(28px, 2.6vw, 36px); }
+            .mani-list {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 34px 44px;
+            }
+
+            /* ── DOWNLOAD ── */
+            #download { padding: 130px 44px; }
+            .dl-title { font-size: clamp(44px, 4.4vw, 60px); }
+            .dl-sub { font-size: 18px; }
+            .dl-btns { flex-direction: row; justify-content: center; gap: 18px; }
+            .btn-dl-play, .btn-dl-soon { width: auto; max-width: none; }
+
+            /* ── WEB VERSION ── */
+            #web-version { padding: 120px 44px 90px; }
+            .web-card { padding: 50px 46px; }
+            .web-card-grid { grid-template-columns: repeat(4, 1fr); }
+            .web-cta-row { flex-direction: row; justify-content: center; flex-wrap: wrap; gap: 16px 28px; }
+
+            /* ── FOOTER ── */
+            footer { padding: 50px 44px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
@@ -959,6 +1102,23 @@
     <a href="https://mach-t.app" style="display:inline-block;margin-left:10px;background:#fff;color:#7C3AED;padding:5px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;vertical-align:middle;">Ir ahora →</a>
 </div>
 <div class="page-progress" id="pageProgress"></div>
+
+<!-- ══════════════════════════════════════════
+     NAVBAR (solo escritorio)
+════════════════════════════════════════════ -->
+<header class="site-nav">
+    <a href="#hero" class="nav-brand">
+        <img src="icon.png" alt="Mach-T">
+        <span>Mach-T</span>
+    </a>
+    <nav class="nav-links">
+        <a href="#features">Características</a>
+        <a href="#screenshots">La app</a>
+        <a href="#manifesto">Manifiesto</a>
+        <a href="https://web.mach-t.app" target="_blank" rel="noopener">Versión web</a>
+    </nav>
+    <a href="#download" class="nav-cta">Descargar</a>
+</header>
 
 <!-- ══════════════════════════════════════════
      EASTER EGG — Manifiesto
@@ -989,7 +1149,7 @@
     </div>
     <div class="particles" id="particles"></div>
 
-    <div class="hero-content">
+    <div class="hero-visual">
         <div class="logo-wrap" id="logoWrap" style="cursor:pointer">
             <div class="logo-halo"></div>
             <div class="logo-ring"></div>
@@ -1001,7 +1161,9 @@
             <span class="sparkle" style="bottom:0px;right:5px;animation-delay:1.8s;font-size:13px;color:#F59E0B">✦</span>
             <span class="sparkle" style="top:50%;left:-15px;animation-delay:2.3s;font-size:9px;color:#10B981">✦</span>
         </div>
+    </div>
 
+    <div class="hero-content">
         <div class="hero-chip">Universidad del Magdalena</div>
 
         <h1>MACH-T</h1>
